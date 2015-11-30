@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MP4Player</class>
+ <widget class="QMainWindow" name="MP4Player">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>654</width>
+    <height>412</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>歌曲预览</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {	
+	background: #939393;
+	color: whitesmoke;
+}
+
+VlcWidgetVideo{
+	background:#333333;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
+    <item>
+     <widget class="VlcWidgetVideo" name="video" native="true"/>
+    </item>
+    <item>
+     <widget class="VlcWidgetSeek" name="seek" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="rightMargin">
+       <number>15</number>
+      </property>
+      <item>
+       <widget class="VlcWidgetVolumeSlider" name="volume" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pause">
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+    background-color: rgb(147, 147, 147);
+    border: 1px solid rgb(170, 170, 170);
+    color:rgb(0, 0, 0);
+    font-size:14px;
+    border-radius:5px;    
+}
+QPushButton:hover{
+    background-color:rgb(255, 255, 255);
+    border: 1px solid rgb(42, 42, 42);
+    color:rgb(42, 42, 42);
+}
+
+QPushButton:pressed{
+    background-color: rgb(255, 146, 62);
+    border: 1px solid rgb(255, 146, 62);
+    color:rgb(255, 255, 255);
+}</string>
+        </property>
+        <property name="text">
+         <string>暂停</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stop">
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+    background-color: rgb(147, 147, 147);
+    border: 1px solid rgb(170, 170, 170);
+    color:rgb(0, 0, 0);
+    font-size:14px;
+    border-radius:5px;    
+}
+QPushButton:hover{
+    background-color:rgb(255, 255, 255);
+    border: 1px solid rgb(42, 42, 42);
+    color:rgb(42, 42, 42);
+}
+
+QPushButton:pressed{
+    background-color: rgb(255, 146, 62);
+    border: 1px solid rgb(255, 146, 62);
+    color:rgb(255, 255, 255);
+}</string>
+        </property>
+        <property name="text">
+         <string>关闭</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+    color:rgb(0, 0, 0);
+}</string>
+          </property>
+          <property name="text">
+           <string>音轨 </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox">
+          <property name="styleSheet">
+           <string notr="true">QComboBox{
+    border:1px solid rgb(170, 170, 170);
+    border-radius:5px;
+    font-size:14px;
+    color:rgb(0, 0, 0);    
+}
+QComboBox::down-arrow{
+    image:url(:/arrow/images/combobox_down.png);
+}
+QComboBox::down-arrow:on{
+    image:url(:/arrow/images/combobox_up.png);
+}
+QComboBox QAbstractItemView{
+     border:1px solid rgb(170, 170, 170);
+     selection-color:rgb(255, 255, 255);
+     color:rgb(0, 0, 0);
+}
+
+QComboBox QAbstractItemView::item{
+        height:30px;
+        font-size:10px;
+}
+
+QComboBox::drop-down{
+    width:20px;
+    border:none;
+}
+QComboBox:on{
+    border:1px solid rgb(170, 170, 170);
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+}
+
+QComboBox#Combobox:hover{
+    border:1px solid rgb(42, 42, 42);
+	background-color:rgb(255, 255, 255);
+    color:rgb(42, 42, 42);
+}
+QComboBox#Combobox:disabled{
+    border:1px solid rgb(201, 201, 201);
+    color:rgb(225, 225, 225);
+}
+</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>VlcWidgetSeek</class>
+   <extends>QWidget</extends>
+   <header>WidgetSeek.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VlcWidgetVideo</class>
+   <extends>QWidget</extends>
+   <header>WidgetVideo.h</header>
+   <container>1</container>
+   <slots>
+    <signal>fullscreen()</signal>
+    <slot>toggleFullscreen()</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>VlcWidgetVolumeSlider</class>
+   <extends>QWidget</extends>
+   <header>WidgetVolumeSlider.h</header>
+   <container>1</container>
+   <slots>
+    <slot>mute()</slot>
+    <slot>volumeUp()</slot>
+    <slot>volumeDown()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
