@@ -10,6 +10,10 @@ class MysqlQuery;
 class PagingTableView;
 class QVBoxLayout;
 class QHBoxLayout;
+
+/*
+ * fm歌单基本信息界面
+*/
 class FmInfoWidget : public QWidget
 {
     Q_OBJECT
@@ -24,14 +28,50 @@ public:
     void paintEvent(QPaintEvent *);
 
     void initSql(MysqlQuery *sql);
+
+    /*
+     * 设置fm歌单名
+     * fmname 歌单名
+    */
     void setFmName(const QString &fmname);
+
+    /*
+     * 设置fm图片
+     * path 图片路径
+    */
     void setImage(const QString &path);
+
+    /*
+     * 设置共有多少歌单
+     * total 歌单数
+    */
     void setTotal(const int &total);
+
+    /*
+     * 设置歌单页数
+     * total 歌单数
+    */
     void setTotalRows(const int &total);
+
+    /*
+     * 设置歌单显示歌曲
+     * query 数据库返回数据
+    */
     void setTableValue(QSqlQuery &query);
+
+    /*
+     * 获取鼠标所在位置
+    */
     QRect getRightButtonGeometry();
+
+    /*
+     * 清除界面歌单数据
+    */
     void clear();
 
+    /*
+     * 界面设置fm歌单图片
+    */
     void setImage(const QPixmap &pixmap);
 signals:
     void  modifyFm();

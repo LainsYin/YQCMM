@@ -23,7 +23,11 @@
 #include "adwidget.h"
 #include "blackwidget.h"
 #include "listinfowidget.h"
+#include "yunclient.h"
 
+/*
+ * 主界面
+*/
 class MainWidget : public QMainWindow //DropShadowWidget
 {
     Q_OBJECT
@@ -39,7 +43,7 @@ protected:
      void mousePressEvent(QMouseEvent *event);
      void mouseReleaseEvent(QMouseEvent *event);
      void mouseMoveEvent(QMouseEvent *event);
-     virtual void paintEvent(QPaintEvent *event);
+     virtual void paintEvent(QPaintEvent *);
 private:
      QPoint move_point; //移动的距离
      bool mouse_press; //按下鼠标左键
@@ -83,6 +87,8 @@ private:
     ListInfoWidget *songs_Info;
     ListInfoWidget *singer_Info;
     ListInfoWidget *list_Info;    
+
+    YunClient *client;
 
     int desktopWidth;
     int desktopHeight;

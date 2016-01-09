@@ -12,6 +12,10 @@ class QPushButton;
 class QVBoxLayout;
 class QHBoxLayout;
 class PagingTableView;
+/*
+ * 歌曲资料设定
+ * 实现暂未使用
+*/
 class ListInfoWidget : public QWidget
 {
     Q_OBJECT

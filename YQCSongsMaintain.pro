@@ -76,7 +76,6 @@ SOURCES += src/main.cpp\
     src/blackwidget.cpp \
     src/listinfowidget.cpp \
     src/tablemodel.cpp \
-    src/itemdelegate.cpp \
     src/pagingtableview.cpp \
     src/libinfodialog.cpp \
     src/typeindexvalue.cpp \
@@ -114,7 +113,9 @@ SOURCES += src/main.cpp\
     player/src/WidgetVolumeSlider.cpp \
     player/MP4Player.cpp \
     VideoConvertion/ConvertionMP4.cpp \
-    src/publicsongdialog.cpp
+    src/publicsongdialog.cpp \
+    src/yunclient.cpp \
+    src/yundm.cpp
     
 
 HEADERS  += \
@@ -142,7 +143,6 @@ HEADERS  += \
     include/blackwidget.h \
     include/listinfowidget.h \
     include/tablemodel.h \
-    include/itemdelegate.h \
     include/pagingtableview.h \
     include/libinfodialog.h \
     include/typeindexvalue.h \
@@ -195,7 +195,9 @@ HEADERS  += \
     player/MP4Player.h \
     VideoConvertion/ConvertionMP4.h \
     include/releasetech.h \
-    include/publicsongdialog.h
+    include/publicsongdialog.h \
+    include/yunclient.h \
+    include/yundm.h
 
 FORMS    += \
     ui/addfmmedialist.ui \

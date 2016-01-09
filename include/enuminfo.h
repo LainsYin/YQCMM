@@ -12,6 +12,10 @@
 #define WINDOW_ONEBUTTON_WIDTH  170
 #define DEFAULT_SKIN            ":/skin/17_big"
 
+/*
+ * 枚举定义
+*/
+
 enum checkBoxStatus{
     checkBox_normal=10,
     checkBox_select=20,
@@ -214,7 +218,8 @@ enum listWidgetItem{
     widItem_setInfo,
     widItem_songsInfo,
     widItem_singerInfo,
-    widItem_listInfo
+    widItem_listInfo,
+    widItem_update
 };
 
 enum stackedWidgetItem{
@@ -231,7 +236,8 @@ enum stackedWidgetItem{
     stacked_actorblack=10,
     stacked_setmediainfo=11,
     stacked_setactorinfo=12,
-    stacked_setlistinfo=13
+    stacked_setlistinfo=13,
+    stacked_update=14
 };
 
 enum setInfoList{
@@ -240,6 +246,19 @@ enum setInfoList{
     infoList_type,
     infoList_edit
 
+};
+
+enum paging{
+    paging_jumppage = 0,
+    paging_nextPage = 1,
+    paging_upPage = 2,
+    paging_firtPage = 3,
+    paging_lastPage = 4
+};
+
+enum fmState{
+    fm_modify = 0,
+    fm_new = 1,
 };
 
 

@@ -141,4 +141,10 @@
                 <text>   排行榜资料</text>
                 <tooltip>排行榜资料</tooltip>                
         </tool>
+		<tool>
+                <parentID>-1</parentID>
+                <ID>90</ID>
+                <text>曲库更新</text>
+                <tooltip>曲库更新</tooltip>
+        </tool>
 </tools>

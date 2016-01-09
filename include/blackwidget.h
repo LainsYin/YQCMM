@@ -18,6 +18,9 @@ class TableView;
 
 class MysqlQuery;
 
+/*
+ * 黑名单
+*/
 class BlackWidget : public QWidget
 {
     Q_OBJECT
@@ -30,22 +33,34 @@ public:
     void setWidgetValue(int  itemIndex);
 
     void initSqlQuery(MysqlQuery *sql);
+    //初始化歌曲黑名单
     void initBlack_Media();
+    //初始化歌星黑名单
     void initBlack_Actor();
+    /*
+     * 初始化黑名单界面和代理
+    */
     void initBlack_Total();
+    /*
+     *显示查询出来的黑名单数据
+    */
     void show_black();
 //    void setBlackColumnWidth_Media(TableView *widget);
 //    void setBlackColumnWidth_Actor(QTableView *widget);
 signals:    
 
 public slots:
+    //添加鼠标右键菜单
     void addBlackRightMenu();
+    //单个取消黑名单
     void cancelBlack(const int &row);
+    //同时取消多个黑名单
     void cancelBlackMush();
-
-     void play(const int &row, const int &);
+    //视频预览
+    void play(const int &row, const int &);
 
 private:
+    //云更新 信息记录
     bool cancleBlack_J(const QVector<int> &rows);
 
 public:

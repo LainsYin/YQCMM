@@ -21,6 +21,10 @@ class ImageDelegate;
 class CheckBoxDelegate;
 class MoveDelegate;
 class QHBoxLayout;
+/*
+ * 分页处理基类
+ * 查询出来需要分页显示的可以集成该类
+*/
 class PagingTableView : public QWidget
 {
     Q_OBJECT
@@ -35,6 +39,9 @@ private:
     void actionMenu();
     void setWidgetValue();
 public:
+    /*
+     * 初始化分页信息
+    */
     void initPagingQueryLimitArgu();
 
 signals:
@@ -59,20 +66,50 @@ public slots:
     void update_View();
     void palyVideo(const QString &path, const int &track);
 public:
+    /*
+     * 设置显示勾选框
+    */
     void setShowCheckBox();
+    /*
+     * 初始化歌曲自定义委托
+    */
     void initMediaDelegate(bool isBlack = true);
+    /*
+     * 初始化歌星自定义委托
+    */
     void initActorDelegate(bool isBlack = true);
+    /*
+     * 歌星查询自定义委托
+    */
     void setQueryActorDelegate();
+    /*
+     *歌曲查询自定义委托
+    */
     void setQueryMediaDelegate();
+    /*
+     * fm自定义委托
+    */
     void setFmDelegate();
+    /*
+     * fm添加歌曲自定义委托
+     * add_dele 委托按键字符
+    */
     void setFmAddMusicDelegate(const QString &add_dele);
+    /*
+     * fm歌曲显示自定义委托
+    */
     void setFmShowMusicDelegate();
+    /*
+     * 设置广告自定义委托
+    */
     void setAdDelegate();
     void setMediaListDelegate();
     void setInfoDelegate(int rows);
     void setAddModifyDelegate(const QString &add_dele);
     void setActorOnlineDelegate();
     void setMediaOnlineDelegate();
+    void setYunDelegate();
+    void setYunDownDelegate();
     void showUploadData(QSqlQuery &query, bool showMediaOrActor); ///true歌曲 false歌星
     void showQuerySingerData(QSqlQuery &query);
     void showUploadSingerAddModityData(QSqlQuery &query, QList< QString > &paths);

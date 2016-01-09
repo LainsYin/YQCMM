@@ -12,6 +12,10 @@ class QLabel;
 class QPushButton;
 class QLineEdit;
 class PagingTableView;
+
+/*
+ * fm歌单修改对话框
+*/
 class FmAddModifyDialog : public DropShadowWidget
 {
     Q_OBJECT
@@ -28,20 +32,65 @@ public:
     void initSql(MysqlQuery *sql, QSqlQuery &query);
     void initType(const QString &type);
     void setReplaceRow(const bool &rep, const int &row);
+
+    /*
+     *设置fm状态  新fm或修改fm
+     * state 状态
+    */
     void setFmState(const int &state);
+    /*
+     *设置view代理
+     * item
+    */
     void setType_delegate(const int &item);
+    /*
+     *设置view歌曲信息
+     * item
+    */
     void setFmViewValue();
 
+    /*
+     * 设置view广告歌曲信息 （未使用）
+    */
     void setAdViewValue(const QString &type);
 
+    /*
+     * 保存歌单修改信息
+     * return  成功保存true 否则false
+    */
     bool saveModityLid();
+    /*
+     * 保存新歌单信息
+     * return  成功保存true 否则false
+    */
     bool saveNewLid();
+    /*
+     * 保存歌单里增加的歌曲
+     * return  成功保存true 否则false
+    */
     bool saveMusic();
 
+    /*
+     * 隐藏歌单界面信息
+    */
     void initMediaList();
+
+    /*
+     * 保存歌单信息
+    */
     bool saveMediaList();
+
+    /*
+     *保存替换热歌和网络歌曲  （未使用）
+    */
     bool saveReplaceMediaList(QString hotnet = NULL);
+    /*
+     *保存替换热歌  （未使用）
+    */
     bool saveMediaListHot();
+    /*
+     *保存网络歌曲  （未使用）
+    */
     bool saveMediaListNet();
 
     void setSavePushbuttonHidden(bool hidden = false);

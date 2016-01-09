@@ -86,7 +86,7 @@
                 <tooltip>欧美音乐榜</tooltip>                
         </tool>
 		
-		<tool>
+        <tool>
                 <parentID>-1</parentID>
                 <ID>60</ID>
                 <text>广告歌曲管理</text>
@@ -94,10 +94,10 @@
         </tool>
 		
 	<tool>
-			<parentID>-1</parentID>
-			<ID>70</ID>
-			<text>黑名单管理</text>
-			<tooltip>黑名单管理</tooltip>                
+                <parentID>-1</parentID>
+                <ID>70</ID>
+                <text>黑名单管理</text>
+                <tooltip>黑名单管理</tooltip>
 	</tool>
 		<tool>
                 <parentID>70</parentID>
@@ -110,5 +110,11 @@
                 <ID>701</ID>
                 <text>   歌星黑名单</text>
                 <tooltip>歌星黑名单</tooltip>                
+        </tool>
+        <tool>
+                <parentID>-1</parentID>
+                <ID>80</ID>
+                <text>曲库更新</text>
+                <tooltip>曲库更新</tooltip>
         </tool>
 </tools>

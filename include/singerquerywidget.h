@@ -15,6 +15,9 @@ class QComboBox;
 class QTableView;
 class QPushButton;
 class PagingTableView;
+/*
+ * 歌星查询界面
+*/
 class SingerQueryWidget : public QWidget
 {
     Q_OBJECT

@@ -82,6 +82,7 @@ MainWidget::MainWidget(QWidget *parent)
     songs_Info = new ListInfoWidget(stacked_widget, _sql);
     singer_Info = new ListInfoWidget(stacked_widget, _sql);
     list_Info = new ListInfoWidget(stacked_widget, _sql);
+    client = new YunClient(stacked_widget);
 
     initLib();
 
@@ -99,6 +100,7 @@ MainWidget::MainWidget(QWidget *parent)
     stacked_widget->insertWidget(stacked_setmediainfo, songs_Info);
     stacked_widget->insertWidget(stacked_setactorinfo, singer_Info);
     stacked_widget->insertWidget(stacked_setlistinfo, list_Info);
+    stacked_widget->insertWidget(stacked_update, client);
 }
 
 MainWidget::~MainWidget()
@@ -192,7 +194,6 @@ void MainWidget::turnPage(int current_row)
 
     int stacked_page = -1;
     if ( current_row == widItem_LibTotal ){
-//        lib_widget.initQueryCondition();
         stacked_page = stacked_total;
     }else if(current_row == widItem_songs){
         stacked_page = stacked_mediaquery;
@@ -255,6 +256,8 @@ void MainWidget::turnPage(int current_row)
     }else if( current_row == widItem_listInfo){
         stacked_page = stacked_setlistinfo;
         list_Info->initListInfo(stacked_setlistinfo);
+    } else if(current_row == widItem_update){
+        stacked_page = stacked_update;
     }
 
     stacked_widget->setCurrentIndex(stacked_page);
@@ -300,7 +303,7 @@ bool MainWidget::isIntOfStr(const QString &str)
     return true;
 }
 
-void MainWidget::paintEvent(QPaintEvent *event)
+void MainWidget::paintEvent(QPaintEvent *)
 {    
 //    DropShadowWidget::paintEvent(event);
 //    QPainter painter(this);
@@ -313,7 +316,6 @@ void MainWidget::paintEvent(QPaintEvent *event)
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
-    //    qDebug() << "width : " << stacked_widget->width() << " height : " << stacked_widget->height();
 }
 
 

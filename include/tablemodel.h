@@ -5,7 +5,9 @@
 #include <QStringList>
 #include <QTableView>
 #include <QHeaderView>
-
+/*
+ * 自定义模型
+*/
 class TableModel : public QAbstractTableModel
 {
     Q_OBJECT

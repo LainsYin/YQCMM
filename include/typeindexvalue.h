@@ -2,6 +2,9 @@
 #define TYPEINDEXVALUE_H
 #include <QWidget>
 #include <QMap>
+/*
+ * 未使用
+*/
 class TypeIndexValue
 {
 public:

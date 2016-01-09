@@ -204,6 +204,11 @@ void AdWidget::combobox_IndexChanged(const int &row)
     setAdValue();
 }
 
+/*
+ * 第一个是广告类型ad
+ * 第二个是广告类型pro
+ * 第三个开始是公播类型
+*/
 QString AdWidget::getType()
 {
     QString str = NULL;

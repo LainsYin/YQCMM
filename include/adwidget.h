@@ -26,14 +26,26 @@ public:
     void setWidgetSize();
     void paintEvent(QPaintEvent *);
 
+    /*
+     * 初始化数据指针
+    */
     void initSql(MysqlQuery *sql);
+    /*
+     * 获取广告类型和公播类型
+    */
     QString getType();
     void getAdValue(const QSqlQuery &_query, MediaList &_list);
 
 signals:
 
 public slots:
+    /*
+     * 根据广告类型获取歌曲数据
+    */
     void setAdValue();
+    /*
+     * combobox值改变调用
+    */
     void combobox_IndexChanged(const int &row);
 
     void moveUp(const int &row);
@@ -41,12 +53,24 @@ public slots:
     void deleteMusic(const int &row);
     void addMusic();
 
+    /*
+     * 添加公播歌曲路口函数
+    */
     void insertMediaList(QList<Media> _media);
+    /*
+     * 视频预览
+    */
     void play(const int &row, const int &);
 
+    /*
+     * 上传公播歌曲
+    */
     void uploadPublicSong();
 
 private:
+    /*
+     * 添加公播类型 初始化combobox
+    */
     void addPublicSongType();
 
 private:

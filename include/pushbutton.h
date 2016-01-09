@@ -6,6 +6,9 @@
 #include <QPainter>
 #include <QMouseEvent>
 
+/*
+ * 重写按键类
+*/
 class PushButton : public QPushButton
 {
     Q_OBJECT

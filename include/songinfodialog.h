@@ -9,6 +9,9 @@ class QLabel;
 class MysqlQuery;
 class QHBoxLayout;
 class QVBoxLayout;
+/*
+ * 歌曲信息对话框
+*/
 class SongInfoDialog : public DropShadowWidget
 {
 public:

@@ -2158,7 +2158,7 @@ bool MysqlQuery::updateActor(const qint64 &sid, const Actor &actor, const Actor 
     if(!actor.info.isEmpty())
         str.append(QString(" , aa.info = '%1' ").arg(actor.info));
 
-    str.append(QString(" where serial_id = %1 ;").arg(actor.serial_id));
+    str.append(QString(" where sid = %1 ;").arg(sid));
     qDebug() << " actor save : " << str;
     qDebug() << " sid : " << sid;
     QSqlQuery query;

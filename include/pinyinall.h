@@ -8,7 +8,9 @@
 #pragma once
 //acssi 0x20~0x7E
 
-
+/*
+ * 中日韩文转拼音
+*/
 class PinyinAll
 {
 public:

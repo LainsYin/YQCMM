@@ -18,6 +18,9 @@ class PagingTableView;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
+/*
+ * 歌曲排行界面
+*/
 class SongsListWidget : public QWidget
 {
     Q_OBJECT

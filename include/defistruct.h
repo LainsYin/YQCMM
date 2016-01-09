@@ -5,6 +5,9 @@
 #include <QtGlobal>
 #include <QStringList>
 
+/*
+ * 结构体定义
+*/
 struct MediaPagingQuery{
 
     QString language;
@@ -56,19 +59,6 @@ struct PagingQueryLimitArgu{
     int    currentpage; //当前页码
     int    totalRow; //总共行数
     int    totalPage;//总页码
-};
-
-enum paging{
-    paging_jumppage = 0,
-    paging_nextPage = 1,
-    paging_upPage = 2,
-    paging_firtPage = 3,
-    paging_lastPage = 4
-};
-
-enum fmState{
-    fm_modify = 0,
-    fm_new = 1,
 };
 
 struct ActorPagingQuery{

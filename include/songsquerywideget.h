@@ -20,7 +20,9 @@ class MysqlQuery;
 class QSqlQuery;
 class PagingTableView;
 class QCalendarWidget;
-
+/*
+ * 歌曲查询界面
+*/
 class SongsQueryWideget : public QWidget
 {
     Q_OBJECT

@@ -23,6 +23,9 @@ struct YUN{
     QString version;
 };
 
+/*
+ * 云更新对话框
+*/
 class ReleaseDialog : public DropShadowWidget
 {
     Q_OBJECT

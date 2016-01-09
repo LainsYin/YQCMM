@@ -11,6 +11,9 @@ class PagingTableView;
 class MysqlQuery;
 class QHBoxLayout;
 class QVBoxLayout;
+/*
+ * 曲库统计-显示对话框
+*/
 class LibInfoDialog : public DropShadowWidget
 {
     Q_OBJECT
@@ -21,7 +24,15 @@ public:
     void paintEvent(QPaintEvent *);
 
     void setTitleString(const QString &title); 
+
+    /*
+     * 显示歌星详细信息
+    */
     void showInfoActor(MysqlQuery *sql, ActorPagingQuery queryArgu);
+
+    /*
+     * 显示歌曲详细信息
+    */
     void showInfoMedia(MysqlQuery *sql, MediaPagingQuery queryArgu);
     void initActorOrMedia();
 

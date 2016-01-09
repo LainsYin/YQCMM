@@ -12,6 +12,9 @@ namespace Ui {
 class StaffLogin;
 }
 
+/*
+ * 用户登录对话框
+*/
 class StaffLogin : public QDialog
 {
     Q_OBJECT

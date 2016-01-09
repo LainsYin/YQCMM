@@ -9,6 +9,9 @@
 #include <QMouseEvent>
 #include <qmath.h>
 
+/*
+ * 对话框基类重写
+*/
 class DropShadowWidget : public QDialog  //
 {
     Q_OBJECT

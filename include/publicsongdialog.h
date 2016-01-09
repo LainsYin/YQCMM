@@ -14,6 +14,9 @@ class QLineEdit;
 class QProgressBar;
 class QComboBox;
 class Media;
+/*
+ * 公播类型对话框
+*/
 class PublicSongDialog : public DropShadowWidget
 {
     Q_OBJECT

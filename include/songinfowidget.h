@@ -13,7 +13,9 @@ class QPushButton;
 class QCalendarWidget;
 class QVBoxLayout;
 class QHBoxLayout;
-
+/*
+ * 歌曲信息界面
+*/
 class SongInfoWidget : public QWidget
 {
     Q_OBJECT

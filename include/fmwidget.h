@@ -17,6 +17,10 @@ class MysqlQuery;
 class FmAddModifyDialog;
 class QVBoxLayout;
 class QHBoxLayout;
+
+/*
+ * 歌单主界面
+*/
 class FMWidget : public QWidget
 {
     Q_OBJECT
@@ -33,11 +37,29 @@ public:
 
     void initSql(MysqlQuery *sql);
 public slots:
+    /*
+     * 设置fm歌曲信息
+    */
     void setFmValue();
+
+    /*
+     * 显示fm歌曲
+    */
     void show_FM();
 public:
+    /*
+     * 当前fm序号
+    */
     int getOffset();
+
+    /*
+     * 获取fm歌单信息
+    */
     void getFmvalue(const QSqlQuery &query, SongList &value);
+
+    /*
+     * 设置fm图片
+    */
     void setFmImage(const QString &title, const int &_index);
 signals:
 

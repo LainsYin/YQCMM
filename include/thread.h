@@ -8,6 +8,9 @@ class SingerInfoWdiget;
 class Media;
 class Actor;
 
+/*
+ * 线程
+*/
 class Thread : public QThread
 {
     Q_OBJECT

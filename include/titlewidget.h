@@ -11,6 +11,9 @@
 #include "pushbutton.h"
 #include "dropshadowwidget.h"
 
+/*
+ * 关于界面
+*/
 class TitleWidget : public QWidget
 {
     Q_OBJECT

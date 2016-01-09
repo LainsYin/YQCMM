@@ -12,6 +12,9 @@ class QLabel;
 class QPushButton;
 class QLineEdit;
 class PagingTableView;
+/*
+ * 歌星添加或修改对话框
+*/
 class SingerAddModifyDialog : public DropShadowWidget
 {
     Q_OBJECT

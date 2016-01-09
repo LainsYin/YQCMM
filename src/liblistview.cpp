@@ -1,5 +1,4 @@
 ﻿#include "liblistview.h"
-#include "itemdelegate.h"
 #include "enuminfo.h"
 #include "yqcdelegate.h"
 #include "releasetech.h"
@@ -120,6 +119,8 @@ void LibListView::setHiddenItem(int row, bool isexpanded)
 #ifndef YQC_TECH
         if(row >= 14)
             row++;
+        if (row == 19)
+            row += 4;
 #else
 #endif
 
@@ -205,6 +206,8 @@ void LibListView::clickedRow(const QModelIndex & index)
 #ifndef YQC_TECH
         if(currentRow >= 14)
             currentRow++;
+        if (currentRow == 19)
+            currentRow += 4;
 #else
 #endif
         emit currentPage(currentRow);

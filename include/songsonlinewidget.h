@@ -14,7 +14,9 @@ class QHBoxLayout;
 class QTableView;
 class PagingTableView;
 class MysqlQuery;
-
+/*
+ * 歌曲上线界面
+*/
 class SongsOnlineWidget : public QWidget
 {
     Q_OBJECT

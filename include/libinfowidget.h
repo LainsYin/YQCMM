@@ -12,6 +12,9 @@ class QTableView;
 class MysqlQuery;
 class PagingTableView;
 class LibDelegate;
+/*
+ * 曲库统计界面
+*/
 class LibInfoWidget : public QWidget
 {
     Q_OBJECT
@@ -28,8 +31,13 @@ public:
     void initQueryCondition();
     void setTableModelValue( QList< QPair<QString, qint64> > listA,
                              QList< QPair<QString, qint64> > listM);
-
+    /*
+     * 歌星统计双击显示内容
+    */
     void singerDoubleClicked(const QModelIndex & index);
+    /*
+     * 歌曲统计双击显示内容
+    */
     void songDoubleClicked(const QModelIndex & index);
 
 private slots:

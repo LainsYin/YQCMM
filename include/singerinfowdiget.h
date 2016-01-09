@@ -10,6 +10,9 @@ class QComboBox;
 class QPushButton;
 class QVBoxLayout;
 class QHBoxLayout;
+/*
+ * 歌星通用信息界面
+*/
 class SingerInfoWdiget : public QWidget
 {
     Q_OBJECT

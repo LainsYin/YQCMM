@@ -4,6 +4,7 @@
 #include "mysqlquery.h"
 #include "player/MP4Player.h"
 #include "releasetech.h"
+#include "enuminfo.h"
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
@@ -671,6 +672,62 @@ void PagingTableView::setMediaOnlineDelegate()
     tableView->setColumnHidden(0, true);
 #endif
 }
+
+void PagingTableView::setYunDelegate()
+{
+
+    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    QStringList headerList;
+    headerList  << "序号" << "版本" << "大小" << "版本信息"  << "发布时间" << "更新";
+
+    ButtonDelegate *update = new ButtonDelegate(this);
+    update->setTextColor(254, 107, 107);
+    update->setButtonText("更新");
+//    DelReconQueueDelegate *progress = new DelReconQueueDelegate(this);
+//    tableView->setItemDelegateForColumn(6, progress);
+    tableView->setItemDelegateForColumn(5, update);
+
+//    connect(tableView, &TableView::clicked, this, &PagingTableView::selectRow);
+    connect(update, &ButtonDelegate::currentRow, this, &PagingTableView::currentRow);
+
+    model->setHorizontalHeaderList(headerList);
+    model->refrushModel();
+
+#ifndef YQC_TECH
+    tableView->setColumnHidden(1, true);
+#else
+    tableView->setColumnHidden(0, true);
+#endif
+}
+
+void PagingTableView::setYunDownDelegate()
+{
+    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    QStringList headerList;
+    headerList  << "MID" << "SERIAL_ID" << "歌曲名" << "歌星名" << "语种" << "分类"  << "进度" << "编辑";
+
+    ButtonDelegate *cancel = new ButtonDelegate(this);
+    cancel->setTextColor(254, 107, 107);
+    cancel->setButtonText("取消");
+    DelReconQueueDelegate *progress = new DelReconQueueDelegate(this);
+    tableView->setItemDelegateForColumn(7, cancel);
+    tableView->setItemDelegateForColumn(6, progress);
+
+    connect(tableView, &TableView::clicked, this, &PagingTableView::selectRow);
+    connect(cancel, &ButtonDelegate::currentRow, this, &PagingTableView::currentRow);
+
+    model->setHorizontalHeaderList(headerList);
+    model->refrushModel();
+
+#ifndef YQC_TECH
+    tableView->setColumnHidden(1, true);
+#else
+    tableView->setColumnHidden(0, true);
+#endif
+}
+
 
 void PagingTableView::showUploadData(QSqlQuery &query, bool showMediaOrActor)
 {

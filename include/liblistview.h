@@ -11,6 +11,9 @@
 #include "util.h"
 class QStandardItemModel;
 
+/*
+ * 界面列表左边选项界面
+*/
 class LibListView : public QWidget
 {
 Q_OBJECT
