@@ -15,7 +15,7 @@ class QProgressBar;
 class QComboBox;
 class Media;
 /*
- * 公播类型对话框
+ * 公播类型 上传歌曲资源 对话框
 */
 class PublicSongDialog : public DropShadowWidget
 {
@@ -33,11 +33,24 @@ public:
     void initSql(MysqlQuery *sql);
 
 private slots:
+    /*
+     * 视频预览
+    */
     void preview();
+    /*
+     * 确定上传
+    */
     void yes();
 
+    //未实现
     void uploadsuccess(const qint64 &mid);
+    /*
+     * 更新进度定时开始
+    */
     void timeStart(qint64 mid = 0);
+    /*
+     * 更新进度定时结束
+    */
     void timeOver();
 
 private:

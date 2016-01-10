@@ -50,12 +50,33 @@ public slots:
     void timeStart(qint64 serial_id = 0);
     void timeOver();
 private:
+    /*
+     * 更新视图
+    */
     void updateView(const Media &media);
     QStringList getUpdateValue(const Media &media);
+    /*
+     * 查询serial_id是否存在
+     * mid 要查询的serial_id号
+     * return 不存在返回-1 存在返回所在行
+    */
     int isExsitOfSerial_id(const qint64 &serial_id);
+    /*
+     * 查询mid是否存在
+     * mid 要查询的mid号
+     * return 不存在返回-1 存在返回所在行
+    */
     int isExsidOfMid(const qint64 &mid);
 
+    /*
+     * 获取最大的serial_id
+     * return 返回最大serial_id
+    */
     qint64 getMaxMediasSerial_id();
+    /*
+     * 获取最大的mid
+     * return 返回最大的mid
+    */
     qint64 getMaxMediaMid();
 
     void setTab_order();

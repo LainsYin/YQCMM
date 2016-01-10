@@ -41,8 +41,15 @@ public slots:
 
 private slots:
 
+    /*
+     * 批量上传
+    */
     void upload();
+    /*
+     * 批量上传浏览
+    */
     void preview();
+
     void save();
     void tempSave(Actor &actor);
 

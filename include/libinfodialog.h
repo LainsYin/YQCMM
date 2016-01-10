@@ -12,7 +12,7 @@ class MysqlQuery;
 class QHBoxLayout;
 class QVBoxLayout;
 /*
- * 曲库统计-显示对话框
+ * 曲库统计-显示对话框(双击打开的对话框)
 */
 class LibInfoDialog : public DropShadowWidget
 {

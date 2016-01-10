@@ -103,39 +103,103 @@ public:
      * 设置广告自定义委托
     */
     void setAdDelegate();
+    /*
+     * 歌单自定义委托
+    */
     void setMediaListDelegate();
+    /*
+     * 资料设置自定义委托
+    */
     void setInfoDelegate(int rows);
+    /*
+     * 歌星添加修改自定义委托
+    */
     void setAddModifyDelegate(const QString &add_dele);
+    /*
+     * 歌星上线自定义委托
+    */
     void setActorOnlineDelegate();
+    /*
+     * 歌曲上线自定义委托
+    */
     void setMediaOnlineDelegate();
+    /*
+     *云更新列表自定义委托
+    */
     void setYunDelegate();
+    /*
+     * 云更新下载自定义委托
+    */
     void setYunDownDelegate();
+    /*
+     * 查询显示数据用（）
+    */
     void showUploadData(QSqlQuery &query, bool showMediaOrActor); ///true歌曲 false歌星
+    /*
+     * 查询歌星数据显示
+    */
     void showQuerySingerData(QSqlQuery &query);
+    /*
+     * 歌星添加修改数据委托
+    */
     void showUploadSingerAddModityData(QSqlQuery &query, QList< QString > &paths);
     void showUploadMediaListData(QSqlQuery &query);
     void showUploadData_blackActor(QSqlQuery &query);
+
+    /*
+     * 设置歌星/歌曲值
+    */
     void setMediaValue(const QSqlQuery &query, QStringList &rowValue, int );
     void setActorValue(const QSqlQuery &query, const QString &runPath,
                        int , QStringList &rowValue);
+
+    /*
+     * 设置歌星黑名单值
+    */
     void setActorValue_blackActor(const QSqlQuery &query, const QString &runPath,
                        int , QStringList &rowValue);
+    /*
+     * 设置最小面翻页信息widget隐藏
+    */
     void setWidgetBottomHidden(const bool &hidden = true);
 
+    /*
+     * 设置model数值
+    */
     void setModelValue(QList<QStringList> &data);
+    /*
+     * 获取model的值
+    */
     void getValue(QList< QStringList > &rows);
     int rowCount();
 
     void setSexNation(const QMap<int, QString> &_nation, const QMap<int, QString> &_sex);
 
-
+    /*
+     * 设置歌曲列宽
+    */
     void setMediaColumnWidth(const int &width = 1150);
+    /*
+     * 设置歌星列宽
+    */
     void setActorColumnWidth(const int &columns, const int &width = 1150);
 
+    /*
+     * 设置歌曲黑名单列宽
+    */
     void setMedia_black_CW(const int &width = 1150);
+    /*
+     * 设置歌星黑名单列宽
+    */
     void setActor_black_CW(const int &columns = 6, const int &width = 1150);
 
+    /*
+     * 设置平均列宽
+    */
     void setSectionResizeMode();
+    /*
+     * 设置当前行数
+    */
     void setCurrentRowNum(const int &num);
 
 private slots:

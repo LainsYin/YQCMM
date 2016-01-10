@@ -20,14 +20,27 @@ public:
 
     void run();
 
+    //上传歌曲
     void uploadMedia();
+    //上传歌星
     void uploadActor();
 
+    /*
+     * 上传云更新数据
+     * filename 压缩包名
+     * localpath 当前路径
+     * _retSize 实时上传数据大小
+    */
     void setUploadYun(const QString &filename , const QString &localpath, QString *_retSize = NULL);
+    /*
+     * 上传云更新压缩包
+    */
     void uploadYun();
 
     void setSongInfoWidgetPointer( SongInfoWidget *_song,  MysqlQuery *_sql, QString *_retSize = NULL);
     void setSingerInfoWidgetPointer( SingerInfoWdiget *_singer,  MysqlQuery *_sql, QString *_retSize = NULL);
+
+    //设置歌星和歌曲值
     void setSongValue(const QList< Media> _medias);
     void setSingerValue(const QList< Actor> _actors);
 signals:

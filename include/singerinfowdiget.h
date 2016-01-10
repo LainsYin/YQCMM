@@ -26,26 +26,89 @@ public:
     void setWidgetSize();
     void paintEvent(QPaintEvent *);
 
+    /*
+     * 歌星上线隐藏界面最下面widget
+     * 歌星上线界面隐藏界面最下面widgetbottom
+     * 显示widgetbottom_online
+    */
     void isSingerOnline();
+    /*
+     *歌星预览或修改
+     * 隐藏widgetbottom_online
+     * 显示wigetbottom
+    */
     void isPreviewAndModify();
+    /*
+     * 星号提示
+    */
     void isRequired();
+    /*
+     * 是否为空
+    */
     bool isEmpty();
+    /*
+     * 必填项是否填写
+    */
     bool isRequiredOption();
-    void set_disabled();
-    void set_enabled();
+    /*
+     * 设置控件状态
+     * status true 控件可编辑 false 控件不可编辑
+    */
+    void set_enabled(bool status);
 
+    /*
+     * 获取歌星信息数据
+     * _actor 待赋值数据结构
+    */
     void getActorValue(Actor &_actor);
+    /*
+     * 获取歌星上线数据
+     * _actor 待赋值数据结构
+    */
     void getActorOnlineValue(Actor &_actor);
+    /*
+     * 设置界面歌星值
+     * _actor 歌星数据
+    */
     void setActorValue(const Actor &_actor);
+    /*
+     * 设置歌星上线界面歌星值
+     * _actor 歌星数据
+    */
     void setActorValue_online(const Actor &_actor);
+    /*
+     * 获取歌星头像路径
+     * return 返回歌星头像路径
+    */
     QString getImagePath();
 
+    /*
+     * 设置sex
+     * _sex 性别数据
+    */
     void set_comboBox_sex(QMap<int, QString> &_sex);
+    /*
+     * 设置国籍
+     * _nat 国籍数据
+    */
     void set_comboBox_nation(QMap<int, QString> &_nat);
+    /*
+     * 设置starts enabled 值
+    */
     void set_comboBox_Remain();
+    /*
+     * 设置歌星头像数据
+     * path 歌星头像路径
+    */
     void setImageOnlineRetPath(const QString &path);
 
+    /*
+     * 设置serial_id值
+    */
     void setPlaceholder_serial_id(qint64 &serial_id);
+    /*
+     * 设置星号标识
+    */
     void set_tooptip_image();
 
     void setOldActorValue(Actor _actor);

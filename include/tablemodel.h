@@ -6,7 +6,7 @@
 #include <QTableView>
 #include <QHeaderView>
 /*
- * 自定义模型
+ * 自定义表格模型
 */
 class TableModel : public QAbstractTableModel
 {

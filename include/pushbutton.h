@@ -8,6 +8,7 @@
 
 /*
  * 重写按键类
+ * 实现鼠标事件
 */
 class PushButton : public QPushButton
 {

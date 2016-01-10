@@ -29,8 +29,7 @@ public:
     void setWidgetSize();
     void paintEvent(QPaintEvent *);
 
-    void set_disabled();
-    void set_enabled();
+    void set_enabled(bool status);
     void isRequired();
     bool isEmpty();
     bool isRequiredOption();

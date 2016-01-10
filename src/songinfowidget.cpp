@@ -828,102 +828,53 @@ void SongInfoWidget::paintEvent(QPaintEvent *)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
-void SongInfoWidget::set_disabled()
+void SongInfoWidget::set_enabled(bool status)
 {
-    lineEdit_serial_id->setEnabled(false);
-    lineEdit_upload_video->setEnabled(false);
-    lineEdit_pinyin->setEnabled(false);
-    lineEdit_head->setEnabled(false);
-    lineEdit_create_time->setEnabled(false);
+    lineEdit_serial_id->setEnabled(status);
+    lineEdit_upload_video->setEnabled(status);
+    lineEdit_pinyin->setEnabled(status);
+    lineEdit_head->setEnabled(status);
+    lineEdit_create_time->setEnabled(status);
 
-    lineEdit_name->setEnabled(false); //lineEdit_name->setDisabled();
-    lineEdit_lyric->setEnabled(false);
-    lineEdit_header->setEnabled(false);
-    lineEdit_words->setEnabled(false);
-    lineEdit_prelude->setEnabled(false);
+    lineEdit_name->setEnabled(status); //lineEdit_name->setDisabled();
+    lineEdit_lyric->setEnabled(status);
+    lineEdit_header->setEnabled(status);
+    lineEdit_words->setEnabled(status);
+    lineEdit_prelude->setEnabled(status);
 
-    lineEdit_addSinger->setEnabled(false);
-    lineEdit_info->setEnabled(false);
+    lineEdit_addSinger->setEnabled(status);
+    lineEdit_info->setEnabled(status);
 
-    comboBox_language->setEnabled(false);
-    comboBox_version->setEnabled(false);
-    comboBox_source->setEnabled(false);
+    comboBox_language->setEnabled(status);
+    comboBox_version->setEnabled(status);
+    comboBox_source->setEnabled(status);
 
-    comboBox_type->setEnabled(false);
-    comboBox_resolution->setEnabled(false);
-    comboBox_rthym->setEnabled(false);
+    comboBox_type->setEnabled(status);
+    comboBox_resolution->setEnabled(status);
+    comboBox_rthym->setEnabled(status);
 
-    comboBox_match->setEnabled(false);
-    comboBox_enabled->setEnabled(false);
-    comboBox_original_track->setEnabled(false);
-    comboBox_sound_track->setEnabled(false);
-    comboBox_quality->setEnabled(false);
-    comboBox_effect->setEnabled(false);
-    comboBox_pitch->setEnabled(false);
+    comboBox_match->setEnabled(status);
+    comboBox_enabled->setEnabled(status);
+    comboBox_original_track->setEnabled(status);
+    comboBox_sound_track->setEnabled(status);
+    comboBox_quality->setEnabled(status);
+    comboBox_effect->setEnabled(status);
+    comboBox_pitch->setEnabled(status);
 
-    comboBox_attribute01->setEnabled(false);
-    comboBox_attribute02->setEnabled(false);
-    comboBox_attribute03->setEnabled(false);
-    comboBox_attribute04->setEnabled(false);
-    comboBox_attribute05->setEnabled(false);
-    comboBox_attribute06->setEnabled(false);
-
-
-    pushButton_calendar->setHidden(true);
-    pushButton_addSinger->setHidden(true);
-    pushButton_upload_video->setHidden(true);
-    pushButton_upload_lyric->setHidden(true);
-    PushButton_question->setHidden(true);
-    PushButton_attribute->setHidden(true);
-}
-
-void SongInfoWidget::set_enabled()
-{
-    lineEdit_serial_id->setEnabled(true);
-    lineEdit_upload_video->setEnabled(true);
-    lineEdit_pinyin->setEnabled(true);
-    lineEdit_head->setEnabled(true);
-    lineEdit_create_time->setEnabled(true);
-
-    lineEdit_name->setEnabled(true); //lineEdit_name->setDisabled();
-    lineEdit_lyric->setEnabled(true);
-    lineEdit_header->setEnabled(true);
-    lineEdit_words->setEnabled(true);
-    lineEdit_prelude->setEnabled(true);
-
-    lineEdit_addSinger->setEnabled(true);
-    lineEdit_info->setEnabled(true);
-
-    comboBox_language->setEnabled(true);
-    comboBox_version->setEnabled(true);
-    comboBox_source->setEnabled(true);
-
-    comboBox_type->setEnabled(true);
-    comboBox_resolution->setEnabled(true);
-    comboBox_rthym->setEnabled(true);
-
-    comboBox_match->setEnabled(true);
-    comboBox_enabled->setEnabled(true);
-    comboBox_original_track->setEnabled(true);
-    comboBox_sound_track->setEnabled(true);
-    comboBox_quality->setEnabled(true);
-    comboBox_effect->setEnabled(true);
-    comboBox_pitch->setEnabled(true);
-
-    comboBox_attribute01->setEnabled(true);
-    comboBox_attribute02->setEnabled(true);
-    comboBox_attribute03->setEnabled(true);
-    comboBox_attribute04->setEnabled(true);
-    comboBox_attribute05->setEnabled(true);
-    comboBox_attribute06->setEnabled(true);
+    comboBox_attribute01->setEnabled(status);
+    comboBox_attribute02->setEnabled(status);
+    comboBox_attribute03->setEnabled(status);
+    comboBox_attribute04->setEnabled(status);
+    comboBox_attribute05->setEnabled(status);
+    comboBox_attribute06->setEnabled(status);
 
 
-    pushButton_calendar->setHidden(false);
-    pushButton_addSinger->setHidden(false);
-    pushButton_upload_video->setHidden(false);
-    pushButton_upload_lyric->setHidden(false);
-    PushButton_question->setHidden(false);
-    PushButton_attribute->setHidden(false);
+    pushButton_calendar->setHidden(!status);
+    pushButton_addSinger->setHidden(!status);
+    pushButton_upload_video->setHidden(!status);
+    pushButton_upload_lyric->setHidden(!status);
+    PushButton_question->setHidden(!status);
+    PushButton_attribute->setHidden(!status);
 }
 
 void SongInfoWidget::isRequired()

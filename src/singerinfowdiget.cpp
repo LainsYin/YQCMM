@@ -562,46 +562,25 @@ bool SingerInfoWdiget::isRequiredOption()
     return false;
 }
 
-void SingerInfoWdiget::set_disabled()
+void SingerInfoWdiget::set_enabled(bool status)
 {
-    lineEdit_serial_id->setEnabled(false);
-    lineEdit_pinyin->setEnabled(false);
-    lineEdit_head->setEnabled(false);
-    lineEdit_count->setEnabled(false);
+    lineEdit_serial_id->setEnabled(status);
+    lineEdit_pinyin->setEnabled(status);
+    lineEdit_head->setEnabled(status);
+    lineEdit_count->setEnabled(status);
 
-    lineEdit_name->setEnabled(false); //lineEdit_name->setDisabled();
-    lineEdit_header->setEnabled(false);
-    lineEdit_words->setEnabled(false);
-    lineEdit_info->setEnabled(false);
-
-
-    comboBox_sex->setEnabled(false);
-    comboBox_stars->setEnabled(false);
-    comboBox_nation->setEnabled(false);
-    comboBox_enabled->setEnabled(false);
-
-    pushButton_upload->setHidden(true);
-}
-
-void SingerInfoWdiget::set_enabled()
-{
-    lineEdit_serial_id->setEnabled(true);
-    lineEdit_pinyin->setEnabled(true);
-    lineEdit_head->setEnabled(true);
-    lineEdit_count->setEnabled(true);
-
-    lineEdit_name->setEnabled(true); //lineEdit_name->setDisabled();
-    lineEdit_header->setEnabled(true);
-    lineEdit_words->setEnabled(true);
-    lineEdit_info->setEnabled(true);
+    lineEdit_name->setEnabled(status); //lineEdit_name->setDisabled();
+    lineEdit_header->setEnabled(status);
+    lineEdit_words->setEnabled(status);
+    lineEdit_info->setEnabled(status);
 
 
-    comboBox_sex->setEnabled(true);
-    comboBox_stars->setEnabled(true);
-    comboBox_nation->setEnabled(true);
-    comboBox_enabled->setEnabled(true);
+    comboBox_sex->setEnabled(status);
+    comboBox_stars->setEnabled(status);
+    comboBox_nation->setEnabled(status);
+    comboBox_enabled->setEnabled(status);
 
-    pushButton_upload->setHidden(false);
+    pushButton_upload->setHidden(!status);
 }
 
 void SingerInfoWdiget::getActorValue(Actor &_actor)

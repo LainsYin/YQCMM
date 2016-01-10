@@ -21,9 +21,25 @@ public:
     void initWidget();
     void initWidgetValue();
     void paintEvent(QPaintEvent *);
+    /*
+     * 设置标题字符串
+     * title 标题字符串
+    */
     void setTitleString(const QString &title);
+    /*
+     * 设置数据库指针
+     * sql mysql数据库指针
+    */
     void setSqlPointer(MysqlQuery *sql);
+    /*
+     * 选择样式表类型
+     * hidden 是否隐藏
+    */
     void selectStyleSheet(bool hidden = false);
+    /*
+     * 设置歌星值
+     * _media 歌星数据结构体
+    */
     void setValue(const Actor _media);
 
 public slots:

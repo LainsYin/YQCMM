@@ -25,6 +25,8 @@ struct YUN{
 
 /*
  * 云更新对话框
+ * 选择时间段，打包该时间段下的所有涉及数据到远程云端
+ * 并将版本信息添加远程数据库
 */
 class ReleaseDialog : public DropShadowWidget
 {

@@ -151,7 +151,7 @@ void SingerInfoDialog::initWidgetValue()
     widgetSave->setHidden(true);
     widgetUpdate->setHidden(false);
     selectStyleSheet(true);
-    info->set_disabled();
+    info->set_enabled(false);
 }
 
 void SingerInfoDialog::paintEvent(QPaintEvent *)
@@ -193,7 +193,7 @@ void SingerInfoDialog::updateActorValue()
 {
     selectStyleSheet(false);
     info->set_tooptip_image();
-    info->set_enabled();
+    info->set_enabled(true);
     info->pushButton_upload->setHidden(false);
     widgetSave->setHidden(false);
     widgetUpdate->setHidden(true);

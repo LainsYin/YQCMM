@@ -170,7 +170,7 @@ void SongInfoDialog::initWidgetValue()
     widgetUpdate->setHidden(false);
     info->infoLayout->setSpacing(22);
     selectStyleSheet(true);
-    info->set_disabled();
+    info->set_enabled(false);
 }
 
 void SongInfoDialog::paintEvent(QPaintEvent *)
@@ -212,7 +212,7 @@ void SongInfoDialog::updateMediaValue()
 {
     selectStyleSheet(false);
     info->set_Tooltip_image();
-    info->set_enabled();
+    info->set_enabled(true);
     widgetSave->setHidden(false);
     widgetUpdate->setHidden(true);
     setTitleString("歌曲修改");

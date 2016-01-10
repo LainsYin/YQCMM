@@ -34,16 +34,32 @@ public:
     void setWidgetSize();
     void paintEvent(QPaintEvent *);
 
+    /*
+     * 初始化歌单列表
+     * type 歌单类型
+     * item 菜单类型
+     * sql 数据库指针
+    */
     void initList(const QString type, const int &item, MysqlQuery *sql);
+    /*
+     * net 网络排行 hot 热歌榜 chi华语音乐榜
+     * item 菜单类型
+     * sql 数据库指针
+    */
     void initListNet(const int &item, MysqlQuery *sql);
     void initListHot(const int &item, MysqlQuery *sql);
     void initListChi(const int &item, MysqlQuery *sql);
 
 public slots:
+    //设置视图界面值
     void setViewValue();
+    //翻页显示视图值
     void setViewValuePaging();
+    //设置不同类型combobox值
     void setHotNetTypes(QList<QString> types);
+    //设置视图值
     void setHotNetViewValue();
+    //更新视图值
     void updateViewValue();
     void updateHotNetViewValue();
 
@@ -51,9 +67,11 @@ public slots:
     void languageStateChanged(int state);
     void typeStateChanged(int state);
 
-
+    //上移
     void moveUp(const int &row);
+    //下移
     void moveDown(const int &row);
+    //删除
     void deleteMusic(const int &row);
 
     void moveUpHN(const int &row);

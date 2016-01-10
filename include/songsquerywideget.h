@@ -35,10 +35,32 @@ public:
     void initWidgetValue();
     void paintEvent(QPaintEvent *);
 public slots:
+    /*
+     * 设置歌曲值
+    */
     void setMediaValue();
+    /*
+     * 设置歌曲值，
+     * row  操作的当前行 （设置哪行歌曲的数据）
+    */
     void setSongInfo(const int &row);
+    /*
+     * 设置是否k歌选项
+     * row 操作的当前行
+     * isMatch 是否k歌
+    */
     void setMatchMusic(const int &row, const int &isMatch);
+
+    /*
+     * 视频预览
+     * row 操作的当前行
+     *
+    */
     void play(const int &row, const int &);
+    /*
+     * 删除歌曲
+     * row 操作的当前行
+    */
     void deleteMedia(const int &row);
 
 public:

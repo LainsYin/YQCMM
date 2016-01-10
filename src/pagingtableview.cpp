@@ -694,11 +694,11 @@ void PagingTableView::setYunDelegate()
     model->setHorizontalHeaderList(headerList);
     model->refrushModel();
 
-#ifndef YQC_TECH
-    tableView->setColumnHidden(1, true);
-#else
-    tableView->setColumnHidden(0, true);
-#endif
+//#ifndef YQC_TECH
+//    tableView->setColumnHidden(1, true);
+//#else
+//    tableView->setColumnHidden(0, true);
+//#endif
 }
 
 void PagingTableView::setYunDownDelegate()
