@@ -12,8 +12,19 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDateTime>
+#include <QFileInfo>
+#include <QSettings>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonParseError>
+#include <QJsonDocument>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 #include <QMessageBox>
 #include <QDebug>
+
+#define RECORD_PAGE 10
 
 YunClient::YunClient(QWidget *parent) : QWidget(parent)
 {
@@ -27,6 +38,11 @@ YunClient::YunClient(QWidget *parent) : QWidget(parent)
     connect(calendar_end, &QCalendarWidget::selectionChanged, this, &YunClient::updateCaleSta_e);
 
     connect(pushbutton_query, &QPushButton::clicked, this, &YunClient::getUpdateVersionList);
+    connect(update_list, &PagingTableView::currentRow, this, &YunClient::requestVersionInfo);
+
+    QSettings *initConfig = new QSettings("SongsMaintain.conf", QSettings::IniFormat);
+    initConfig->setIniCodec("UTF-8");
+    host = initConfig->value("UPDATE/hostport").toString();
 }
 
 YunClient::~YunClient()
@@ -49,10 +65,16 @@ void YunClient::readAndSetStyleSheet()
     label_cen->setObjectName("Label");
     label_progress->setObjectName("Label");
     label_speed->setObjectName("Label");
+    label_recordPage->setObjectName("Label");
+    label_totalRecords->setObjectName("Label");
+    label_page->setObjectName("Label");
     lineedit_end->setObjectName("LineEdit");
     lineedit_start->setObjectName("LineEdit");
+    lineedit_recordPage->setObjectName("LineEdit");
 
     pushbutton_query->setObjectName("Button");
+    pushbutton_next->setObjectName("Button");
+    pushbutton_up->setObjectName("Button");
     pushbutton_end->setObjectName("CalendarButton");
     pushbutton_start->setObjectName("CalendarButton");
 }
@@ -65,14 +87,20 @@ void YunClient::initWidget()
 
     lineedit_start = new QLineEdit(widget_top);
     lineedit_end = new QLineEdit(widget_top);
+    lineedit_recordPage = new QLineEdit(widget_bottom);
 
     pushbutton_query = new QPushButton(widget_top);
     pushbutton_start = new QPushButton(lineedit_start);
     pushbutton_end = new QPushButton(lineedit_end);
+    pushbutton_up = new QPushButton(widget_bottom);
+    pushbutton_next = new QPushButton(widget_bottom);
 
     label_cen = new QLabel(widget_top);
     label_progress = new QLabel(widget_bottom);
     label_speed = new QLabel(widget_bottom);
+    label_totalRecords = new QLabel(widget_bottom);
+    label_recordPage = new QLabel(widget_bottom);
+    label_page = new QLabel(widget_bottom);
     update_list = new PagingTableView(widget_center);
 
     calendar_start = new QCalendarWidget(this);
@@ -99,7 +127,19 @@ void YunClient::initWidget()
     layout_list->setContentsMargins(0, 0, 0, 0);
     widget_center->setLayout(layout_list);
 
+    layout_paging = new QHBoxLayout();
+    layout_paging->addWidget(label_totalRecords);
+    layout_paging->addWidget(label_recordPage);
+    layout_paging->addWidget(lineedit_recordPage);
+    layout_paging->addWidget(pushbutton_next);
+    layout_paging->addWidget(label_page);
+    layout_paging->addWidget(pushbutton_up);
+    layout_paging->addStretch();
+    layout_paging->setContentsMargins(20, 6, 10, 6);
+    layout_paging->setSpacing(15);
+
     layout_pro = new QHBoxLayout();
+    layout_pro->addLayout(layout_paging);
     layout_pro->addStretch();
     layout_pro->addWidget(label_progress);
     layout_pro->addWidget(label_speed);
@@ -116,11 +156,15 @@ void YunClient::initWidget()
 
     this->setLayout(vLayout);
 
+    lineedit_recordPage->setFixedSize(50, 36);
     lineedit_start->setFixedSize(260, 36);
     lineedit_end->setFixedSize(260, 36);
     pushbutton_query->setFixedSize(90, 36);
     pushbutton_end->setFixedSize(20, 20);
     pushbutton_start->setFixedSize(20, 20);
+    pushbutton_next->setFixedSize(90, 36);
+    pushbutton_up->setFixedSize(90, 36);
+
     label_cen->setMinimumHeight(36);
     label_progress->setMinimumHeight(36);
     label_speed->setMinimumHeight(36);
@@ -142,59 +186,32 @@ void YunClient::initWidget()
     calendar_end->setGeometry(this->x() + 340, this->y()+55, 280, 180);
     calendar_end->setHidden(true);
 
+    update_list->widget_bottom->setHidden(true);
     update_list->setYunDelegate();
+    update_list->setYunUpdateColumnWidget();
 }
 
 void YunClient::initWidgetValue()
 {
-//    update_list->widget_bottom->setHidden(true);
     label_cen->setText("至");
-    label_progress->setText("进度:");
-    label_speed->setText("速度:");
-
+//    label_progress->setText("进度:");
+//    label_speed->setText("速度:");
+    label_recordPage->setText("每页显示");
+    label_totalRecords->setText("共：");
+    lineedit_recordPage->setText(QString::number(RECORD_PAGE));
     pushbutton_query->setText("查询");
+    pushbutton_next->setText("下一页");
+    pushbutton_up->setText("下一页");
 }
 
-void YunClient::paintEvent(QPaintEvent *)
+void YunClient::paintEvent(QPaintEvent *painter)
 {
     QStyleOption opt;
     opt.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-}
 
-void YunClient::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    QPoint pos = event->pos();
-    if ( pos.x() > label_progress->geometry().x()
-         && pos.x() < label_speed->geometry().x() + label_speed->geometry().width()
-         && pos.y() > widget_bottom->geometry().y()
-         && pos.y() < widget_bottom->geometry().y() + widget_bottom->geometry().height()){
-
-        qDebug() << " yun dm ";
-        YunDM *dm = new YunDM();
-        dm->open();
-    }
-}
-
-void YunClient::mouseReleaseEvent(QMouseEvent *mouse)
-{
-//    QPoint mouPo = mouse->pos();
-//    QRect rectEnd = calendar_end->geometry();
-//    if (mouPo.x() < rectEnd.x()
-//        && mouPo.x() > (rectEnd.x() + rectEnd.width()
-//        && mouPo.y() < rectEnd.y())
-//        && mouPo.y() > (rectEnd.y() + rectEnd.height())
-//        && !calendar_end->isHidden())
-//        calendar_end->setHidden(true);
-
-//    QRect rectStart = calendar_start->geometry();
-//    if (mouPo.x() < rectStart.x()
-//        && mouPo.x() > (rectStart.x() + rectStart.width()
-//        && mouPo.y() < rectStart.y())
-//        && mouPo.y() < (rectStart.y() + rectStart.height())
-//        && !calendar_start->isHidden())
-//        calendar_start->setHidden(true);
+    painter->ignore();
 }
 
 void YunClient::setCalendarStatue_s(bool )
@@ -227,18 +244,359 @@ void YunClient::updateCaleSta_e()
 
 void YunClient::getUpdateVersionList()
 {
-    if (lineedit_start->text().isEmpty() || lineedit_end->text().isEmpty()){
-        QMessageBox::warning(this, "提示", "必须填写日期");
-        return;
-    }
-
     if (QDateTime::fromString(lineedit_start->text(), "yyyy-MM-dd")
             > QDateTime::fromString(lineedit_end->text(), "yyyy-MM-dd")){
         QMessageBox::warning(this, "提示", "开始时间不能大于结束时间");
         return;
     }
 
-
+    request_type = get_version_list;
+    QByteArray url = getUrl("/ml/rs/mediaReleaseVersions/");
+    startRequest(url);
 }
+
+QByteArray YunClient::getUrl(QByteArray path)
+{
+    QString page = label_page->text().split(":").last();
+    QStringList list_page = page.split("/");
+    int cur_page = list_page.first().toInt();
+    int record_page = lineedit_recordPage->text().toInt();
+    cur_page = cur_page == 0 ? 1 : cur_page;
+    record_page = record_page == 0 ? RECORD_PAGE : record_page;
+    QByteArray url = host.toLatin1() + path;
+    url.append(QString::number(cur_page)).append("/");
+    url.append(QString::number(record_page)).append("/");
+    url.append(lineedit_start->text().isEmpty() ? "null" : lineedit_start->text()).append("/");
+    url.append(lineedit_end->text().isEmpty() ? "null" : lineedit_end->text());
+
+    return url;
+}
+
+void YunClient::startRequest(QByteArray url)
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(url));
+    manager = new QNetworkAccessManager(this);
+    //发送GET请求
+    reply = manager->get(request);
+    //连接请求结束信号
+    disconnect(reply);
+    connect(reply, &QNetworkReply::finished,
+            this, &YunClient::replyFinished);
+    //连接响应时返回数据信号
+//    connect(reply, &QNetworkReply::readyRead, this, &YunClient::readyRead);
+
+    //请求更新进度
+//    connect(reply, &QNetworkReply::downloadProgress,
+//            this,  &YunClient::updateDataReadProgress);
+}
+
+void YunClient::replyFinished()
+{
+    if (reply->error() == QNetworkReply::NoError){
+        QByteArray str = reply->readAll();
+        qDebug() << " request return ::: " << str;
+
+        QJsonObject dataJson = getRequestData(QString(str));
+        switch (request_type) {
+        case get_version_list:{
+            QJsonArray listJson = setPagingInfo(dataJson);
+            setVersionList(listJson);
+            break;
+        }
+        case get_media_list:{
+            setUpdateList(dataJson);
+            break;
+        }
+        default:
+            break;
+        }
+    } else {
+        //获取响应的信息，状态码为200表示正常
+        QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        qDebug() << "request error! return code : " << status_code;
+    }
+
+
+    reply->deleteLater();
+    reply = 0;
+}
+
+void YunClient::readyRead()
+{
+    if (reply->error() == QNetworkReply::NoError){
+        QByteArray str = reply->readAll();
+        qDebug() << " request return ::: " << str;
+
+        QJsonObject dataJson = getRequestData(QString(str));
+        switch (request_type) {
+        case get_version_list:{
+            QJsonArray listJson = setPagingInfo(dataJson);
+            setVersionList(listJson);
+            break;
+        }
+        case get_media_list:{
+            setUpdateList(dataJson);
+            break;
+        }
+        default:
+            break;
+        }
+    } else {
+        //获取响应的信息，状态码为200表示正常
+        QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        qDebug() << "request error! return code : " << status_code;
+    }
+}
+
+void YunClient::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
+{
+    qDebug() << " total bytes :" << totalBytes << "read bytes : " << bytesRead;
+}
+
+void YunClient::requestVersionInfo(const int &row)
+{
+    QStringList rowValue = rowList.at(row);
+    QString verId = rowValue.at(1);
+    qDebug() << "click row : " << row << "version id :" << verId;
+    if(!verId.toInt()){
+        qDebug() << "version id error!";
+        return;
+    }
+
+    request_type = get_media_list;
+    QByteArray url =  host.toLatin1() + "/ml/rs/mediaReleaseVersions/" + verId.toLatin1();
+    startRequest(url);
+
+    YunDM *dialog = new YunDM();
+    connect(this, &YunClient::sqlValue, dialog, &YunDM::setSqlValue);
+    dialog->exec();
+
+    getUpdateVersionList();
+}
+
+void YunClient::errView(QJsonObject json)
+{
+    QString errcode, errmsg;
+    if(json.contains("errorCode")){
+        errcode = json.take("errorCode").toString();
+    }
+    if (json.contains("errorMsg")){
+        errmsg = json.take("errorMsg").toString();
+    }
+    QMessageBox::critical(this, "HTTP ERROR",
+                              QString("request error."
+                                      "error code: %1"
+                                      "error msg : %s").arg(errcode).arg(errmsg),
+                              QMessageBox::Yes, QMessageBox::Yes);
+}
+
+QJsonObject YunClient::getRequestData(QString array)
+{
+    QByteArray byte_array = array.toLocal8Bit();
+    QJsonParseError json_error;
+    QJsonDocument parse_doucment = QJsonDocument::fromJson(byte_array, &json_error);
+
+    QJsonObject dataJson;
+    if(json_error.error == QJsonParseError::NoError)
+    {
+        if(!parse_doucment.isObject())
+            return dataJson;
+
+        QJsonObject json = parse_doucment.object();
+        if(json.contains("status")){
+            QJsonValue value = json.take("status");
+            if(!value.toBool()){
+                errView(json);
+                return dataJson;
+            }
+        }
+
+        if(json.contains("data")){
+            dataJson = json.take("data").toObject();
+        }
+    }
+
+    return dataJson;
+}
+
+QJsonArray YunClient::setPagingInfo(QJsonObject json)
+{
+    QJsonArray listJson;
+    if(json.contains("limit")){
+        QJsonValue value = json.take("limit");
+        lineedit_recordPage->setText(QString::number(value.toInt()));
+    }
+
+    QString total, current;
+    if(json.contains("totalPages")){
+        QJsonValue value = json.take("totalPages");
+        total = QString::number(value.toInt());
+    }
+
+    if(json.contains("currentPage")){
+        QJsonValue value = json.take("currentPage");
+        current = QString::number(value.toInt());
+    }
+    if (total.compare("0") != 0 && current.compare("0") != 0)
+        label_page->setText(QString("共: %1/%2").arg(current).arg(total));
+
+    if(json.contains("totalRecords")){
+        QJsonValue value = json.take("totalRecords");
+        label_totalRecords->setText(QString("共：%1").arg(value.toInt()));
+    }
+
+    if (json.contains("list")){
+        listJson = json.take("list").toArray();
+    }
+
+    return listJson;
+}
+
+void YunClient::setVersionList(QJsonArray json)
+{
+    rowList.clear();
+    for (int i=0; i<json.size(); i++)
+    {
+        QJsonObject vjson = json.at(i).toObject();
+        QStringList rowValue;
+
+        rowValue.append(QString::number(i+1));
+        if(vjson.contains("versionId")){
+            QJsonValue value = vjson.take("versionId");
+            rowValue.append(QString::number(value.toInt()));
+        }
+        if(vjson.contains("versionName")){
+            QJsonValue value = vjson.take("versionName");
+            rowValue.append(value.toString());
+        }
+        if(vjson.contains("versionSize")){
+            QJsonValue value = vjson.take("versionSize");
+            rowValue.append(QString::number(value.toDouble()));
+        }
+        if(vjson.contains("versionInfo")){
+            QJsonValue value = vjson.take("versionInfo");
+            rowValue.append(value.toString());
+        }
+        if(vjson.contains("releaseTime")){
+            QJsonValue value = vjson.take("releaseTime");
+            rowValue.append(value.toString());
+        }
+
+        rowList.append(rowValue);
+    }
+
+    update_list->setModelValue(rowList);
+}
+
+void YunClient::setUpdateList(QJsonObject json)
+{
+    if(json.isEmpty()){
+        qDebug() << "  json is empty of set version info.";
+        return;
+    }
+
+    sqlList.clear();
+    rowList.clear();
+    QStringList rowValue;
+    if (json.contains("meidis")){
+        QJsonArray mediaArr = json.take("meidis").toArray();
+        for (int i=0; i<mediaArr.size(); i++)
+        {
+            rowValue.clear();
+            QString mvPath, lyricPath;
+            QJsonObject vjson = mediaArr.at(i).toObject();
+            rowValue.append(QString::number(i+1));
+            if(vjson.contains("type")){
+                QJsonValue value = vjson.take("type");
+                rowValue.append(value.toString());
+            }
+            if(vjson.contains("mname")){
+                QJsonValue value = vjson.take("mname");
+                rowValue.append(value.toString());
+            }
+            if(vjson.contains("serialId")){
+                QJsonValue value = vjson.take("serialId");
+                rowValue.append(QString::number(value.toInt()));
+            }
+            if(vjson.contains("mediaFilePath")){
+                QJsonValue value = vjson.take("mediaFilePath");
+                mvPath = value.toString();
+                rowValue.append(mvPath.isEmpty() ? "无" : "有");
+            }
+            if(vjson.contains("lyric")){
+                QJsonValue value = vjson.take("lyric");
+                lyricPath = value.toString();
+                rowValue.append(lyricPath.isEmpty() ? "无" : "有");
+            }
+            if(vjson.contains("sql")){
+                QJsonValue value = vjson.take("sql");
+                rowValue.insert(1, getOptType(value.toString()));
+                sqlList.insert(rowList.size() + 1, value.toString());
+            }
+
+            rowValue.append("未更新");
+            rowValue.append(mvPath);
+            rowValue.append(lyricPath);
+            rowList.append(rowValue);
+        }
+    }
+
+    if (json.contains("actors")){
+        QJsonArray actorArr = json.take("actors").toArray();
+        for (int i=0; i<actorArr.size(); i++)
+        {
+            rowValue.clear();
+            QString imagePath;
+            QJsonObject vjson = actorArr.at(i).toObject();
+            rowValue.append(QString::number(rowList.size() + 1));
+            rowValue.append("ACTOR");
+            if(vjson.contains("name")){
+                QJsonValue value = vjson.take("name");
+                rowValue.append(value.toString());
+            }
+            if(vjson.contains("serialId")){
+                QJsonValue value = vjson.take("serialId");
+                rowValue.append(QString::number(value.toInt()));
+            }
+            rowValue.append("无");
+            if(vjson.contains("imgFilePath")){
+                QJsonValue value = vjson.take("imgFilePath");
+                imagePath = value.toString();
+                rowValue.append(imagePath.isEmpty() ? "无" : "有");
+            }
+
+            if(vjson.contains("sql")){
+                QJsonValue value = vjson.take("sql");
+                rowValue.insert(1, getOptType(value.toString()));
+                sqlList.insert(rowList.size() + 1, value.toString());
+            }
+            rowValue.append("未更新");
+            rowValue.append(imagePath);
+            rowValue.append("");
+            rowList.append(rowValue);
+        }
+    }
+
+    qDebug() << "request version record : " << rowList.size();
+    emit sqlValue(rowList, sqlList);
+}
+
+QString YunClient::getOptType(const QString &sql)
+{
+    QStringList lists = sql.split(" ");
+    QString optStr = lists.first().toLower();
+    QString retStr = "NO TYPE";
+    if (optStr.compare("insert") == 0){
+        retStr = "INSERT";
+    } else if (optStr.compare("update") == 0){
+        retStr = "UPDATE";
+    } else if (optStr.compare("DELETE") == 0){
+        retStr = "DALETE";
+    }
+
+    return retStr;
+}
+
 
 

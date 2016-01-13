@@ -676,56 +676,36 @@ void PagingTableView::setMediaOnlineDelegate()
 void PagingTableView::setYunDelegate()
 {
 
-    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setSelectionMode(QAbstractItemView::NoSelection);
     QStringList headerList;
-    headerList  << "序号" << "版本" << "大小" << "版本信息"  << "发布时间" << "更新";
+    headerList  << "序号" << "版本ID" << "版本" << "大小" << "版本信息"  << "发布时间" << "更新";
+    m_cancelDelegate->setButtonText("详情");
 
-    ButtonDelegate *update = new ButtonDelegate(this);
-    update->setTextColor(254, 107, 107);
-    update->setButtonText("更新");
-//    DelReconQueueDelegate *progress = new DelReconQueueDelegate(this);
-//    tableView->setItemDelegateForColumn(6, progress);
-    tableView->setItemDelegateForColumn(5, update);
-
-//    connect(tableView, &TableView::clicked, this, &PagingTableView::selectRow);
-    connect(update, &ButtonDelegate::currentRow, this, &PagingTableView::currentRow);
-
+    tableView->setItemDelegateForColumn(6, m_cancelDelegate);
     model->setHorizontalHeaderList(headerList);
     model->refrushModel();
 
-//#ifndef YQC_TECH
-//    tableView->setColumnHidden(1, true);
-//#else
-//    tableView->setColumnHidden(0, true);
-//#endif
+    tableView->setColumnHidden(1, true);
 }
 
 void PagingTableView::setYunDownDelegate()
 {
-    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setSelectionMode(QAbstractItemView::NoSelection);
     QStringList headerList;
-    headerList  << "MID" << "SERIAL_ID" << "歌曲名" << "歌星名" << "语种" << "分类"  << "进度" << "编辑";
+    headerList  << "序号" << "操作" << "类型" << "歌曲/歌星" << "SERIALID"
+                << "视频" << "歌词/头像" << "状态" << "mv" << "lyric/imagepath";
 
-    ButtonDelegate *cancel = new ButtonDelegate(this);
-    cancel->setTextColor(254, 107, 107);
-    cancel->setButtonText("取消");
-    DelReconQueueDelegate *progress = new DelReconQueueDelegate(this);
-    tableView->setItemDelegateForColumn(7, cancel);
-    tableView->setItemDelegateForColumn(6, progress);
-
-    connect(tableView, &TableView::clicked, this, &PagingTableView::selectRow);
-    connect(cancel, &ButtonDelegate::currentRow, this, &PagingTableView::currentRow);
+//    tableView->setItemDelegateForColumn(0, m_checkBoxDelegate);
+//    m_cancelDelegate->setButtonText("更新");
+//    tableView->setItemDelegateForColumn(8, m_cancelDelegate);
 
     model->setHorizontalHeaderList(headerList);
     model->refrushModel();
 
-#ifndef YQC_TECH
-    tableView->setColumnHidden(1, true);
-#else
-    tableView->setColumnHidden(0, true);
-#endif
+    tableView->setColumnHidden(8, true);
+    tableView->setColumnHidden(9, true);
+    QHeaderView *headerView = tableView->horizontalHeader();
+    headerView->setSectionResizeMode(QHeaderView::Stretch); //平均列宽
 }
 
 
@@ -1054,6 +1034,18 @@ void PagingTableView::setActorColumnWidth(const int &columns, const int &width)
     }
 }
 
+void PagingTableView::setYunUpdateColumnWidget(const int &width)
+{
+    int columnWidth = width/6;
+
+    tableView->setColumnWidth(1, columnWidth*0.5);
+    tableView->setColumnWidth(2, columnWidth*0.8);
+    tableView->setColumnWidth(3, columnWidth*0.6);
+    tableView->setColumnWidth(4, columnWidth*2.3);
+    tableView->setColumnWidth(5, columnWidth*1);
+    tableView->setColumnWidth(6, columnWidth*0.8);
+}
+
 void PagingTableView::setMedia_black_CW(const int &width)
 {
     int columnWidth = width/7;
@@ -1163,7 +1155,7 @@ void PagingTableView::jump_page(const int page)
 
  void PagingTableView::show_page()
  {         
-     emit updateView(limitArgu);     
+     emit updateView(limitArgu);
  }
 
 

@@ -274,6 +274,37 @@ QString CurlUpload::uploadMediaVideo(const QString videoPath, QString *ret)
     return returnStr;
 }
 
+QString CurlUpload::uploadYunVideo(const QString videoPath, const QString dir, QString *ret)
+{
+    retSize = ret;
+    QStringList list = videoPath.split("/");
+    QString fileName = list.back();
+    QTextCodec *codec = QTextCodec::codecForName("GBK");
+    QByteArray pathB = codec->fromUnicode(videoPath);
+    QByteArray fileB = fileName.toLocal8Bit();
+    QByteArray dirArr = dir.toLocal8Bit();
+
+    QString returnStr = "";
+    foreach (QString urlStr, resHostList) {
+
+        QByteArray urlByte = urlStr.toLocal8Bit();  ///resUpload.toLocal8Bit();
+        const char type[] = MP4_TYPE;
+        const char *url = urlByte.data();
+        uploadFile(url, type, fileB.data(), pathB.data(), dirArr.data());
+        if(!receiveData.isEmpty()){
+            returnStr = receiveData;
+            receiveData.clear();
+        }
+
+        qDebug() << " return str : " << returnStr;
+    }
+
+    QString temp("-1,-1");
+    retSize = &temp;
+
+    return returnStr;
+}
+
 QString CurlUpload::uploadMedialyric(const QString lyricPath)
 {
     QStringList list = lyricPath.split("/");
@@ -296,6 +327,8 @@ QString CurlUpload::uploadMedialyric(const QString lyricPath)
     }
     return returnStr;
 }
+
+
 
 QString CurlUpload::postJson(const QString &json)
 {
@@ -606,6 +639,25 @@ bool CurlUpload::download_jsonVi(const QString &urlPath, const QString &type, QS
         return true;
 }
 
+bool CurlUpload::download_yun(const QString &type, const QString &url, const QString &savePath)
+{
+    CURLcode nRet;
+    if (type.toLower().compare(MP4_TYPE) == 0){
+        nRet = download_mp4(url, savePath);
+    } else {
+        nRet = download_image(url, savePath);
+    }
+
+    QFile file(savePath);
+    if(file.size() < 500)
+        file.remove();
+
+    if (CURLE_OK != nRet)
+        return false;
+    else
+        return true;
+}
+
 CURLcode CurlUpload::download_image(const char *url, const char *save_path, const char *file_name)
 {
     CURL *curl;
@@ -632,13 +684,14 @@ CURLcode CurlUpload::download_image(const char *url, const char *save_path, cons
 int CurlUpload::uploadFile(const char *url,
                            const char *type,
                            const char *filename,
-                           const char *filepath
+                           const char *filepath,
+                           const char *dir
                           )
 {
     CURL *curl = NULL;
     CURLcode res;
 
-    qDebug() << " file Name : " << filename << " path " << filepath;
+    qDebug() << " file Name : " << filename << " path " << filepath << " dir : " << dir;
 
     struct curl_httppost *post = NULL;
     struct curl_httppost *last = NULL;
@@ -661,6 +714,13 @@ int CurlUpload::uploadFile(const char *url,
 //          fprintf(stderr, "curl_formadd error.\n");
 //          return -1;
 //       }
+
+    if (QString(type).compare("MP4_TYPE") == 0){
+        curl_formadd(&post, &last,
+                     CURLFORM_COPYNAME, "dir",
+                     CURLFORM_COPYCONTENTS, dir,
+                     CURLFORM_END);
+    }
 
      curl_formadd(&post, &last,
               CURLFORM_COPYNAME, "sendfile",

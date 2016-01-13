@@ -57,6 +57,11 @@ public:
     bool download_jsonVi(const QString &urlPath, const QString &type, QString &savePath);
 
     /*
+     * 云更新资源资源下载
+    */
+    bool download_yun(const QString &type, const QString &url, const QString &savePath);
+
+    /*
      * 上传歌星头像
      * fileName 图片名
      * filePath 文件路径
@@ -86,7 +91,7 @@ public:
      * return 返回服务器返回数据
     */
     QString uploadMediaVideo(const QString videoPath, QString *ret = NULL);
-
+    QString uploadYunVideo(const QString videoPath, const QString dir="08", QString *ret=NULL);
     /*
      * 上传歌词
      * filePath 文件路径
@@ -112,6 +117,7 @@ public:
     bool uploadYQDyun(const QString &filename , const QString &localpath,
                       QString &url, QString *ret = NULL);
 
+
 private:
     QString getImgPath(QString filename);
     QString getUrl(QString filename);
@@ -125,7 +131,8 @@ private:
     int uploadFile(const char *url,
                    const char *type,
                    const char *filename,
-                   const char *filepath
+                   const char *filepath,
+                   const char *dir = "08"
                    );
     int uploadFile(QByteArray &url,
                    QByteArray &type,

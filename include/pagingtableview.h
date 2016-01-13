@@ -184,6 +184,8 @@ public:
     */
     void setActorColumnWidth(const int &columns, const int &width = 1150);
 
+    void setYunUpdateColumnWidget(const int &width = 1150);
+
     /*
      * 设置歌曲黑名单列宽
     */
@@ -254,6 +256,7 @@ public:
     CurlUpload *curlDownlaod;
     QString runPath;
 
+//    ButtonDelegate *info_Delegate;
     ButtonDelegate *m_cancelDelegate;
     IconDelegate *m_playDelegate;
     ImageDelegate *m_imageDelegate;

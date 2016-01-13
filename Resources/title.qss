@@ -2,6 +2,10 @@
     background-color: rgb(0, 0, 0);    
 }
 
+QWidget#UpdateWidget{
+    border-bottom: 1px solid rgb(201, 201, 201);
+}
+
 QWidget#WidgetCenter{
     background:rgb(248, 248, 248);
 }
@@ -35,6 +39,12 @@ QLabel#LineHidden{
     background: transparent;
     color:rgb(183, 183, 183);
     font-size: 14px;
+}
+
+QLabel#TitleLabel{
+    background: transparent;
+    font-size:24px;
+    color:rgb(168, 168, 168);
 }
 
 QPushButton#Button{

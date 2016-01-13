@@ -8,6 +8,7 @@
 QT       += core gui
 QT       += sql
 QT       += xml
+QT       += network
 QT += axcontainer
 
 LIBS     += -L$$PWD/curl/lib -llibcurl
