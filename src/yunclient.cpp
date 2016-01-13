@@ -2,6 +2,7 @@
 
 #include "pagingtableview.h"
 #include "yundm.h"
+#include "mysqlquery.h"
 #include <QFile>
 #include <QLabel>
 #include <QPushButton>
@@ -204,6 +205,11 @@ void YunClient::initWidgetValue()
     pushbutton_up->setText("下一页");
 }
 
+void YunClient::initSql(MysqlQuery *sql)
+{
+    _sql = sql;
+}
+
 void YunClient::paintEvent(QPaintEvent *painter)
 {
     QStyleOption opt;
@@ -369,6 +375,7 @@ void YunClient::requestVersionInfo(const int &row)
     startRequest(url);
 
     YunDM *dialog = new YunDM();
+    dialog->initSql(_sql);
     connect(this, &YunClient::sqlValue, dialog, &YunDM::setSqlValue);
     dialog->exec();
 
@@ -492,7 +499,8 @@ void YunClient::setVersionList(QJsonArray json)
 void YunClient::setUpdateList(QJsonObject json)
 {
     if(json.isEmpty()){
-        qDebug() << "  json is empty of set version info.";
+        qDebug() << " "
+                    " json is empty of set version info.";
         return;
     }
 

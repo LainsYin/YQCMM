@@ -585,6 +585,8 @@ public:
     bool addMediaList_hotnet(const QString &hotnet, const QString &, const QStringList &value);
     bool replaceMediaList(int srcMid, int srcIndex,  int destMid, QString type, QString serial_id, QString hotnet = NULL);
 
+    bool executeSql(const QString &sql);
+
 private:
     QString getQueryStr(const QString argu, const PagingQueryLimitArgu &limitArg, QString type = NULL);
     QString getQueryStr(const QString argu);

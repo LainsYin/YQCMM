@@ -2,6 +2,7 @@
 #include "tablemodel.h"
 #include "curlupload.h"
 #include "pagingtableview.h"
+#include "mysqlquery.h"
 #include <QDir>
 #include <QFile>
 #include <QLabel>
@@ -117,6 +118,11 @@ void YunDM::initWidgetValue()
     pushbutton_update_select->setText("更新");
 }
 
+void YunDM::initSql(MysqlQuery *sql)
+{
+    _sql = sql;
+}
+
 void YunDM::paintEvent(QPaintEvent *)
 {
     QStyleOption opt;
@@ -150,24 +156,34 @@ void YunDM::updateInfo()
         rowList.replace(i, rowValue);
         down_list->setModelValue(rowList);
 
-
+        bool sqlexec = false;
         if (!mv.isEmpty()){
             QString filePath = downloadFile("mp4", savePath, mv);
             if (uploadFile("mp4", filePath)){
-                rowList.removeAt(i);
+                if (_sql->executeSql(sqlList.value(i+1))){
+                    rowList.removeAt(i);
+                    sqlList.remove(i+1);
+                } else
+                    qDebug() << "sql error! :: " << sqlList.value(i+1);
             } else{
                 rowValue.replace(rowValue.size() - 3, "更新失败");
             }
         }
 
+        sqlexec = false;
         if (!lyricImage.isEmpty()){
            QString filePath =  downloadFile("image", savePath, lyricImage);
            if (uploadFile("", filePath)){
-               rowList.removeAt(i);
+               if (_sql->executeSqlsqlList.value(i+1)){
+                   rowList.removeAt(i);
+                   sqlList.remove(i+1);
+               } else
+                   qDebug() << " sql error :: " << sqlList.value(I+1);
            } else {
                rowValue.replace(rowValue.size() - 3, "更新失败");
            }
         }
+
         down_list->setModelValue(rowList);
         progress->setValue(rowList.size());
     }

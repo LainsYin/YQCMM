@@ -14,6 +14,7 @@ class PagingTableView;
 class QCalendarWidget;
 class QNetworkReply;
 class QNetworkAccessManager;
+class MysqlQuery;
 
 /*
  * 云更新主界面
@@ -33,6 +34,7 @@ public:
     void readAndSetStyleSheet();
     void initWidget();
     void initWidgetValue();
+    void initSql(MysqlQuery *sql);
     void paintEvent(QPaintEvent *painter);
 signals:
     void sqlValue(QList< QStringList > rowList, QMap<int, QString> sqlList);
@@ -97,6 +99,7 @@ private:
     QList< QStringList > rowList;
     QMap<int, QString> sqlList;
     int request_type;
+    MysqlQuery *_sql;
 };
 
 #endif // YUNCLIENT_H

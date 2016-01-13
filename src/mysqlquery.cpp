@@ -3480,6 +3480,16 @@ bool MysqlQuery::replaceMediaList(int srcMid, int srcIndex, int destMid, QString
     return true;
 }
 
+bool MysqlQuery::executeSql(const QString &sql)
+{
+    QSqlQuery query(db);
+    if (query.exec(str)){
+        return true;
+    }
+
+    return false;
+}
+
 bool MysqlQuery::insertMediaListSongs(const int &index, const QString &detail)
 {
 //    QStringList list;

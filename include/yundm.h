@@ -14,6 +14,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QNetworkReply;
 class QNetworkAccessManager;
+class MysqlQuery;
 
 /*
  * 云更新对话框
@@ -27,6 +28,7 @@ public:
     void readAndSetStyleSheet();
     void initWidget();
     void initWidgetValue();
+    void initSql(MysqlQuery *sql);
     void paintEvent(QPaintEvent *);
 
 
@@ -70,6 +72,8 @@ private:
     QFile *file;
     int type;
     bool requestFinished;
+
+    MysqlQuery *_sql;
 };
 
 #endif // YUNDM_H

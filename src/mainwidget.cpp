@@ -258,6 +258,7 @@ void MainWidget::turnPage(int current_row)
         list_Info->initListInfo(stacked_setlistinfo);
     } else if(current_row == widItem_update){
         stacked_page = stacked_update;
+        client->initSql(_sql);
     }
 
     stacked_widget->setCurrentIndex(stacked_page);
