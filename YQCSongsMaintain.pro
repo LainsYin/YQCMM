@@ -116,7 +116,8 @@ SOURCES += src/main.cpp\
     VideoConvertion/ConvertionMP4.cpp \
     src/publicsongdialog.cpp \
     src/yunclient.cpp \
-    src/yundm.cpp
+    src/yundm.cpp \
+    src/yunthread.cpp
     
 
 HEADERS  += \
@@ -198,7 +199,8 @@ HEADERS  += \
     include/releasetech.h \
     include/publicsongdialog.h \
     include/yunclient.h \
-    include/yundm.h
+    include/yundm.h \
+    include/yunthread.h
 
 FORMS    += \
     ui/addfmmedialist.ui \

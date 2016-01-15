@@ -693,7 +693,7 @@ void PagingTableView::setYunDownDelegate()
     tableView->setSelectionMode(QAbstractItemView::NoSelection);
     QStringList headerList;
     headerList  << "序号" << "操作" << "类型" << "歌曲/歌星" << "SERIALID"
-                << "视频" << "歌词/头像" << "状态" << "mv" << "lyric/imagepath";
+                << "视频" << "歌词/头像" << "mv" << "lyric/imagepath" << "sql";
 
 //    tableView->setItemDelegateForColumn(0, m_checkBoxDelegate);
 //    m_cancelDelegate->setButtonText("更新");
@@ -702,6 +702,7 @@ void PagingTableView::setYunDownDelegate()
     model->setHorizontalHeaderList(headerList);
     model->refrushModel();
 
+    tableView->setColumnHidden(7, true);
     tableView->setColumnHidden(8, true);
     tableView->setColumnHidden(9, true);
     QHeaderView *headerView = tableView->horizontalHeader();

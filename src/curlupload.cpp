@@ -332,6 +332,7 @@ QString CurlUpload::uploadMedialyric(const QString lyricPath)
 
 QString CurlUpload::postJson(const QString &json)
 {
+    //表单类型
     QSettings *initConfig = new QSettings("SongsMaintain.conf", QSettings::IniFormat);
     initConfig->setIniCodec("UTF-8");
     QString urlStr = initConfig->value("JSON/jshost", "http://testyun.17chang.com/upload.php").toString();
@@ -481,6 +482,49 @@ bool CurlUpload::uploadYQDyun(const QString &filename , const QString &localpath
     curl_easy_cleanup(curl);
     fclose(fp);
     return flag;
+}
+
+QString CurlUpload::uploadStoreUpdateStatus(const QString &urlstr, const QString &str)
+{
+    //post json 格式
+    QByteArray array = urlstr.toLocal8Bit();
+    const char *url = array.data();
+    std::string stdStr = str.toStdString();
+    char szJsonData[1024];
+    memset(szJsonData, 0, sizeof(szJsonData));
+    strcpy(szJsonData, stdStr.c_str());
+
+    CURL *curl = NULL;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+    if(curl == NULL)
+    {
+       fprintf(stderr, "curl_easy_init() error.\n");
+       return "";
+    }
+    curl_slist *plist = curl_slist_append(NULL,
+                    "Content-Type:application/json;charset=UTF-8");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, plist);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_POST, 1);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, szJsonData);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_console);
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK)
+    {
+       qDebug() << " post failed : " << res;
+       return "";
+    }
+    curl_easy_cleanup(curl);
+
+    QString returnStr = "";
+    if(!receiveData.isEmpty()){
+        returnStr = receiveData;
+        receiveData.clear();
+    }
+    return returnStr;
 }
 
 QString CurlUpload::getImgPath(QString filename)
@@ -691,8 +735,6 @@ int CurlUpload::uploadFile(const char *url,
     CURL *curl = NULL;
     CURLcode res;
 
-    qDebug() << " file Name : " << filename << " path " << filepath << " dir : " << dir;
-
     struct curl_httppost *post = NULL;
     struct curl_httppost *last = NULL;
     struct curl_slist *headerlist = NULL;
@@ -715,7 +757,7 @@ int CurlUpload::uploadFile(const char *url,
 //          return -1;
 //       }
 
-    if (QString(type).compare("MP4_TYPE") == 0){
+    if (QString(type).compare(MP4_TYPE) == 0){
         curl_formadd(&post, &last,
                      CURLFORM_COPYNAME, "dir",
                      CURLFORM_COPYCONTENTS, dir,

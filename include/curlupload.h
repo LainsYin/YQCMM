@@ -118,6 +118,8 @@ public:
                       QString &url, QString *ret = NULL);
 
 
+    QString uploadStoreUpdateStatus(const QString &urlstr, const QString &str);
+
 private:
     QString getImgPath(QString filename);
     QString getUrl(QString filename);

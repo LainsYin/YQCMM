@@ -3483,7 +3483,7 @@ bool MysqlQuery::replaceMediaList(int srcMid, int srcIndex, int destMid, QString
 bool MysqlQuery::executeSql(const QString &sql)
 {
     QSqlQuery query(db);
-    if (query.exec(str)){
+    if (query.exec(sql)){
         return true;
     }
 

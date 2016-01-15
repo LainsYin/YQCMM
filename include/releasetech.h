@@ -6,7 +6,7 @@
 /*
  * 内外版本切换
 */
-#define  YQC_TECH
+//#define  YQC_TECH
 
 #endif // RELEASETECH
 

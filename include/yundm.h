@@ -5,6 +5,7 @@
 
 #include <QMap>
 #include <QProgressBar>
+class QTimer;
 class QFile;
 class QLabel;
 class QProgressDialog;
@@ -28,23 +29,34 @@ public:
     void readAndSetStyleSheet();
     void initWidget();
     void initWidgetValue();
-    void initSql(MysqlQuery *sql);
+    void initSqlAndVersion(MysqlQuery *sql, const QString &verId, const QString &verName);
     void paintEvent(QPaintEvent *);
 
 
 public slots:
-    void setSqlValue(QList< QStringList > rowVal, QMap<int, QString> sqlVal);
+    void setSqlValue(QList< QStringList > rowVal);
     void updateInfo();
+    void updateInfo1();
 
 private slots:
 //    void replyFinished();
 //    void readyRead();
 //    void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
 
+    void timeOver();
+    void updateDialogView(QStringList row);
+    void updateDownLoadStatus(QString status);
+    void updateStoreStatus();
+
 private:
 //    void startRequest(QString url);
     QString downloadFile(const QString &type, const QString &name, const QString &url);
     bool uploadFile(const QString &type, const QString &filePath);
+
+    void timeStart();
+    bool execSql(const QStringList &info);
+    void writeLogging(const QString &str);
+    void setTitleText(const QString &text="下载管理");
 
 private:
     QLabel *label_title;
@@ -64,7 +76,6 @@ private:
     QVBoxLayout *vLayout;
 
     QList<QStringList> rowList;
-    QMap<int, QString> sqlList;
 
     QNetworkReply *reply;
     QNetworkAccessManager *manager;
@@ -74,6 +85,11 @@ private:
     bool requestFinished;
 
     MysqlQuery *_sql;
+    QString versionId;
+    QString versionName;
+
+    QString retSize;
+    QTimer *timer;
 };
 
 #endif // YUNDM_H

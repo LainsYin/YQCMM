@@ -3,8 +3,10 @@
 #include "curlupload.h"
 #include "pagingtableview.h"
 #include "mysqlquery.h"
+#include "yunthread.h"
 #include <QDir>
 #include <QFile>
+#include <QTimer>
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
@@ -15,7 +17,9 @@
 #include <QHeaderView>
 #include <QTableView>
 #include <QDebug>
+#include <QSettings>
 #include <QJsonObject>
+#include <QMessageBox>
 #include <QCoreApplication>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -116,11 +120,16 @@ void YunDM::initWidgetValue()
     pushbutton_close->setFixedSize(14, 14);
     pushbutton_update_select->setFixedSize(90, 36);
     pushbutton_update_select->setText("更新");
+
+    retSize = "";
+    timer = NULL;
 }
 
-void YunDM::initSql(MysqlQuery *sql)
+void YunDM::initSqlAndVersion(MysqlQuery *sql, const QString &verId, const QString &verName)
 {
     _sql = sql;
+    versionId = verId;
+    versionName = verName;
 }
 
 void YunDM::paintEvent(QPaintEvent *)
@@ -131,90 +140,175 @@ void YunDM::paintEvent(QPaintEvent *)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
-void YunDM::setSqlValue(QList<QStringList> rowVal, QMap<int, QString> sqlVal)
+void YunDM::setSqlValue(QList<QStringList> rowVal)
 {
     rowList = rowVal;
-    sqlList = sqlVal;
 
-    qDebug() << " version update show record:" << rowList.size();
+    writeLogging(QString(" version update show record : %1").arg(rowList.size()));
     down_list->setModelValue(rowList);
 }
 
 void YunDM::updateInfo()
 {
-    savePath = QCoreApplication::applicationDirPath();
-    savePath = savePath.append("/update");
+    if (rowList.size() < 1)
+        return;
+
+    retSize = "-1";
+    YunThread *workerThread = new YunThread(this);
+    workerThread->initValue(rowList, _sql, &retSize);
+    disconnect(workerThread);
+    connect(workerThread, &YunThread::updateView, this, &YunDM::updateDialogView);
+    connect(workerThread, &YunThread::downloadUpload, this, &YunDM::timeStart);
+    connect(workerThread, &YunThread::updateStore, this, &YunDM::updateStoreStatus);
+    connect(workerThread, &YunThread::finished, workerThread, &QObject::deleteLater);
+    workerThread->start();
 
     progress->setHidden(false);
-    progress->setRange(0, rowList.size());
-    for(int i=0; i<rowList.size(); i++) {
-        QStringList rowValue = rowList.at(i);
-        QString mv = rowValue.at(rowValue.size() - 2);
-        QString lyricImage = rowValue.at(rowValue.size() -1 );
+    timeStart();
+}
 
-        rowValue.replace(rowValue.size() - 3, "更新中……");
-        rowList.replace(i, rowValue);
-        down_list->setModelValue(rowList);
 
-        bool sqlexec = false;
+void YunDM::timeStart()
+{
+    if(timer != NULL)
+    {
+        if(timer->isActive())
+        {
+            timer->stop();
+            timer = NULL;
+        }
+    }
+
+    timer = new QTimer(this);
+    disconnect(timer, &QTimer::timeout, 0, 0);
+    connect(timer, &QTimer::timeout, this, &YunDM::timeOver);
+    timer->start(1000);
+
+    retSize = "-1";
+}
+
+void YunDM::timeOver()
+{
+    QStringList list = retSize.split(",");
+    if (list.last().toDouble() < 0){
+        return;
+    } else {
+        progress->setMaximum((int)list.last().toDouble());
+        progress->setValue((int)list.first().toDouble());
+    }
+
+    qDebug() << " ******* upload size : " << retSize;
+}
+
+void YunDM::updateStoreStatus()
+{
+    QSettings *initConfig = new QSettings("SongsMaintain.conf", QSettings::IniFormat);
+    initConfig->setIniCodec("UTF-8");
+    QString storeid = initConfig->value("UPDATE/storeid").toString();
+    QString host = initConfig->value("UPDATE/hostport").toString();
+    host.append("/ml/rs/ktvVersions");
+
+    QString postStr = QString("{\"versionId\":%1, \"versionName\":\"%2\", \"ktvId\":\"%3\"}")
+                             .arg(versionId)
+                             .arg(versionName)
+                             .arg(storeid);
+    CurlUpload *curlDownlaod = new CurlUpload();
+    QString retStr = curlDownlaod->uploadStoreUpdateStatus(host, postStr);
+    writeLogging(QString(" upate store status return result : %1").arg(retStr));
+
+    progress->setHidden(true);
+}
+
+void YunDM::updateDialogView(QStringList row)
+{
+    rowList.removeOne(row);
+    down_list->setModelValue(rowList);
+    if (rowList.size() < 1){
+        QMessageBox::question(this, tr("提示"),("更新完成..."), QMessageBox::Yes);
+        this->close();
+    }
+}
+
+void YunDM::updateDownLoadStatus(QString status)
+{
+    QStringList result = status.split(" ");
+    qDebug() << " download " << result;
+    if (result.size() > 1 && result.last().compare("end") == 0){
+        setTitleText("下载管理");
+    }
+
+    if (result.first().toLower().compare("downloading") == 0){
+        setTitleText(QString("DownLoading %1 ...").arg(result.last()));
+    }
+
+    if (result.first().toLower().compare("uploading") == 0){
+        setTitleText(QString("DownLoading %1 ...").arg(result.last()));
+    }
+}
+
+
+void YunDM::updateInfo1()
+{
+    savePath = QCoreApplication::applicationDirPath();
+    savePath = savePath.append("/update");
+    QList<QStringList> rowListTmp = rowList;
+    for(int i=0; i<rowListTmp.size(); i++) {
+        QStringList rowValue = rowListTmp.at(i);
+        QString mv = rowValue.at(rowValue.size() - 3);
+        QString lyricImage = rowValue.at(rowValue.size() - 2);
+
         if (!mv.isEmpty()){
             QString filePath = downloadFile("mp4", savePath, mv);
-            if (uploadFile("mp4", filePath)){
-                if (_sql->executeSql(sqlList.value(i+1))){
-                    rowList.removeAt(i);
-                    sqlList.remove(i+1);
-                } else
-                    qDebug() << "sql error! :: " << sqlList.value(i+1);
-            } else{
-                rowValue.replace(rowValue.size() - 3, "更新失败");
+            if (!(uploadFile("mp4", filePath))){
             }
         }
 
-        sqlexec = false;
         if (!lyricImage.isEmpty()){
-           QString filePath =  downloadFile("image", savePath, lyricImage);
-           if (uploadFile("", filePath)){
-               if (_sql->executeSqlsqlList.value(i+1)){
-                   rowList.removeAt(i);
-                   sqlList.remove(i+1);
-               } else
-                   qDebug() << " sql error :: " << sqlList.value(I+1);
-           } else {
-               rowValue.replace(rowValue.size() - 3, "更新失败");
-           }
+            QString filePath =  downloadFile("image", savePath, lyricImage);
+            if (!(uploadFile("", filePath))){
+            }
         }
 
-        down_list->setModelValue(rowList);
-        progress->setValue(rowList.size());
+        if(!execSql(rowValue)){
+            rowList.removeOne(rowListTmp.at(i));
+            down_list->setModelValue(rowList);
+        }
     }
+
+    //门店更新状态接口
+    updateStoreStatus();
 }
 
 QString YunDM::downloadFile(const QString &type, const QString &dir, const QString &url)
 {
+    setTitleText("Downloading res……");
+    progress->setHidden(true);
     QStringList list = url.split(UPANYUN);
     QString path = dir + list.last();
     QString tempPath = path;
     tempPath = tempPath.remove(tempPath.split("/").last());
     QDir dirf(tempPath);
-    if(dirf.exists()){
-
-    }else{
+    if(!dirf.exists()){
         dirf.mkpath(tempPath);
     }
 
     CurlUpload *curlDownlaod = new CurlUpload();
     if(curlDownlaod->download_yun(type, url, path)){
-        qDebug() << " download success : " << path;
+        writeLogging(QString(" download success : %1").arg(path));
     } else {
-        qDebug() << " download failed : " << path;
+        writeLogging(QString(" download failed : %1").arg(path));
     }
     delete curlDownlaod;
 
+
+    setTitleText();
     return path;
 }
 
 bool YunDM::uploadFile(const QString &type, const QString &filePath)
 {
+    setTitleText("Upload res...");
+    progress->setHidden(false);
     bool status = false;
     CurlUpload *curlUpload = new CurlUpload();
     QFile file(filePath);
@@ -222,10 +316,11 @@ bool YunDM::uploadFile(const QString &type, const QString &filePath)
         QStringList lists = filePath.split("/");
         QString fileName = lists.last();
         QString dir = lists.at(lists.size() - 2);
-        QString retSize;
         QString ok;
+        timeStart();
+        progress->setValue(0);
         if (type.compare("mp4") == 0){
-            ok = curlUpload->uploadYunVideo(fileName, dir, &retSize);
+            ok = curlUpload->uploadYunVideo(filePath, dir, &retSize);
         } else {
             if(dir.compare("lyrics") == 0){
                 ok = curlUpload->uploadMedialyric(filePath);
@@ -237,23 +332,57 @@ bool YunDM::uploadFile(const QString &type, const QString &filePath)
         }
 
         if(ok.compare("0") == 0){
-            qDebug() << "上传类型不合法";
+            writeLogging(QString(" upload type error : %1").arg(fileName));
             status = false;
         } else if (ok.compare("1") == 0){
-            qDebug() << "上传文件重复，且不可覆盖";
-            status = false;
-        }else{
+            writeLogging(QString("There already exists a file called %1 in %2 and not Overwrite")
+                         .arg(fileName).arg(dir));
             status = true;
+        }else if (ok.isEmpty()){
+            writeLogging(QString("upload return empty."));
+            status = false;
+        } else if (ok.compare("-2") == 0){
+            writeLogging(QString("upload type error."));
+            status = false;
+        }else {
+            status = true;
+            writeLogging(QString("upload return : %1").arg(ok));
         }
 
-        qDebug() << " return size : " << retSize;
+        timer->stop();
     }
 
     if (status){
-        file.remove();
+//        file.remove();
     }
 
+    setTitleText();
     return status;
+}
+
+bool YunDM::execSql(const QStringList &info)
+{
+    bool ret = false;
+    if (_sql->executeSql(info.last())){
+        rowList.removeOne(info);
+        ret = true;
+    } else {
+        writeLogging(QString(" sql error  : %1").arg(info.last()));
+    }
+
+    return ret;
+}
+
+void YunDM::writeLogging(const QString &str)
+{
+    qDebug() << "version id :" << versionId
+             << "version name :" << versionName
+             << str;
+}
+
+void YunDM::setTitleText(const QString &text)
+{
+    label_title->setText(text);
 }
 
 //void YunDM::startRequest(QString url)
