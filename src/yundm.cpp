@@ -125,11 +125,18 @@ void YunDM::initWidgetValue()
     timer = NULL;
 }
 
-void YunDM::initSqlAndVersion(MysqlQuery *sql, const QString &verId, const QString &verName)
+void YunDM::initSqlAndVersion(MysqlQuery *sql, const QString &verId,
+                              const QString &verName, const bool &isUpdate)
 {
     _sql = sql;
     versionId = verId;
     versionName = verName;
+
+    if (isUpdate){
+        pushbutton_update_select->setHidden(true);
+    } else {
+        pushbutton_update_select->setHidden(false);
+    }
 }
 
 void YunDM::paintEvent(QPaintEvent *)
@@ -158,13 +165,12 @@ void YunDM::updateInfo()
     workerThread->initValue(rowList, _sql, &retSize);
     disconnect(workerThread);
     connect(workerThread, &YunThread::updateView, this, &YunDM::updateDialogView);
-    connect(workerThread, &YunThread::downloadUpload, this, &YunDM::timeStart);
+    connect(workerThread, &YunThread::downloadUpload, this, &YunDM::updateDownLoadStatus);
     connect(workerThread, &YunThread::updateStore, this, &YunDM::updateStoreStatus);
     connect(workerThread, &YunThread::finished, workerThread, &QObject::deleteLater);
     workerThread->start();
 
-    progress->setHidden(false);
-    timeStart();
+    progress->setHidden(false);    
 }
 
 
@@ -182,7 +188,7 @@ void YunDM::timeStart()
     timer = new QTimer(this);
     disconnect(timer, &QTimer::timeout, 0, 0);
     connect(timer, &QTimer::timeout, this, &YunDM::timeOver);
-    timer->start(1000);
+    timer->start(100);
 
     retSize = "-1";
 }
@@ -190,14 +196,15 @@ void YunDM::timeStart()
 void YunDM::timeOver()
 {
     QStringList list = retSize.split(",");
-    if (list.last().toDouble() < 0){
-        return;
-    } else {
-        progress->setMaximum((int)list.last().toDouble());
-        progress->setValue((int)list.first().toDouble());
+    if (list.size() == 2){
+        if (list.last().toDouble() < 0){
+            return;
+        } else {
+            progress->setMaximum((int)list.last().toDouble());
+            progress->setValue((int)list.first().toDouble());
+        }
     }
-
-    qDebug() << " ******* upload size : " << retSize;
+    qDebug() << "upload size : " << retSize;
 }
 
 void YunDM::updateStoreStatus()
@@ -235,142 +242,25 @@ void YunDM::updateDownLoadStatus(QString status)
     qDebug() << " download " << result;
     if (result.size() > 1 && result.last().compare("end") == 0){
         setTitleText("下载管理");
-    }
-
-    if (result.first().toLower().compare("downloading") == 0){
+        if(timer != NULL)
+        {
+            if(timer->isActive())
+            {
+                timer->stop();
+                timer = NULL;
+            }
+        }
+    }     
+    else if (result.first().toLower().compare("downloading") == 0){
         setTitleText(QString("DownLoading %1 ...").arg(result.last()));
     }
 
-    if (result.first().toLower().compare("uploading") == 0){
-        setTitleText(QString("DownLoading %1 ...").arg(result.last()));
-    }
-}
-
-
-void YunDM::updateInfo1()
-{
-    savePath = QCoreApplication::applicationDirPath();
-    savePath = savePath.append("/update");
-    QList<QStringList> rowListTmp = rowList;
-    for(int i=0; i<rowListTmp.size(); i++) {
-        QStringList rowValue = rowListTmp.at(i);
-        QString mv = rowValue.at(rowValue.size() - 3);
-        QString lyricImage = rowValue.at(rowValue.size() - 2);
-
-        if (!mv.isEmpty()){
-            QString filePath = downloadFile("mp4", savePath, mv);
-            if (!(uploadFile("mp4", filePath))){
-            }
-        }
-
-        if (!lyricImage.isEmpty()){
-            QString filePath =  downloadFile("image", savePath, lyricImage);
-            if (!(uploadFile("", filePath))){
-            }
-        }
-
-        if(!execSql(rowValue)){
-            rowList.removeOne(rowListTmp.at(i));
-            down_list->setModelValue(rowList);
-        }
-    }
-
-    //门店更新状态接口
-    updateStoreStatus();
-}
-
-QString YunDM::downloadFile(const QString &type, const QString &dir, const QString &url)
-{
-    setTitleText("Downloading res……");
-    progress->setHidden(true);
-    QStringList list = url.split(UPANYUN);
-    QString path = dir + list.last();
-    QString tempPath = path;
-    tempPath = tempPath.remove(tempPath.split("/").last());
-    QDir dirf(tempPath);
-    if(!dirf.exists()){
-        dirf.mkpath(tempPath);
-    }
-
-    CurlUpload *curlDownlaod = new CurlUpload();
-    if(curlDownlaod->download_yun(type, url, path)){
-        writeLogging(QString(" download success : %1").arg(path));
-    } else {
-        writeLogging(QString(" download failed : %1").arg(path));
-    }
-    delete curlDownlaod;
-
-
-    setTitleText();
-    return path;
-}
-
-bool YunDM::uploadFile(const QString &type, const QString &filePath)
-{
-    setTitleText("Upload res...");
-    progress->setHidden(false);
-    bool status = false;
-    CurlUpload *curlUpload = new CurlUpload();
-    QFile file(filePath);
-    if(file.exists()){
-        QStringList lists = filePath.split("/");
-        QString fileName = lists.last();
-        QString dir = lists.at(lists.size() - 2);
-        QString ok;
+    else if (result.first().toLower().compare("uploading") == 0){
+        setTitleText(QString("uploading %1 ...").arg(result.last()));
         timeStart();
-        progress->setValue(0);
-        if (type.compare("mp4") == 0){
-            ok = curlUpload->uploadYunVideo(filePath, dir, &retSize);
-        } else {
-            if(dir.compare("lyrics") == 0){
-                ok = curlUpload->uploadMedialyric(filePath);
-            } else if(dir.compare("fm") == 0){
-                ok = curlUpload->uploadFmImage(filePath);
-            } else if(dir.compare("avator") == 0){
-                ok = curlUpload->uploadActorImage(filePath, &retSize);
-            }
-        }
-
-        if(ok.compare("0") == 0){
-            writeLogging(QString(" upload type error : %1").arg(fileName));
-            status = false;
-        } else if (ok.compare("1") == 0){
-            writeLogging(QString("There already exists a file called %1 in %2 and not Overwrite")
-                         .arg(fileName).arg(dir));
-            status = true;
-        }else if (ok.isEmpty()){
-            writeLogging(QString("upload return empty."));
-            status = false;
-        } else if (ok.compare("-2") == 0){
-            writeLogging(QString("upload type error."));
-            status = false;
-        }else {
-            status = true;
-            writeLogging(QString("upload return : %1").arg(ok));
-        }
-
-        timer->stop();
+    }else {
+        QMessageBox::information(this, "提示", status, QMessageBox::Yes);
     }
-
-    if (status){
-//        file.remove();
-    }
-
-    setTitleText();
-    return status;
-}
-
-bool YunDM::execSql(const QStringList &info)
-{
-    bool ret = false;
-    if (_sql->executeSql(info.last())){
-        rowList.removeOne(info);
-        ret = true;
-    } else {
-        writeLogging(QString(" sql error  : %1").arg(info.last()));
-    }
-
-    return ret;
 }
 
 void YunDM::writeLogging(const QString &str)
@@ -385,54 +275,7 @@ void YunDM::setTitleText(const QString &text)
     label_title->setText(text);
 }
 
-//void YunDM::startRequest(QString url)
-//{
-//    QNetworkRequest request;
-//    request.setUrl(QUrl(url));
-//    manager = new QNetworkAccessManager(this);
-//    //发送GET请求
-//    reply = manager->get(request);
-//    //连接请求结束信号
-//    disconnect(reply);
-//    connect(reply, &QNetworkReply::finished,
-//            this, &YunDM::replyFinished);
-//    //连接响应时返回数据信号
-//    connect(reply, &QNetworkReply::readyRead, this, &YunDM::readyRead);
 
-//    //请求更新进度
-//    connect(reply, &QNetworkReply::downloadProgress,
-//            this,  &YunDM::updateDataReadProgress);
-//}
-
-//void YunDM::replyFinished()
-//{
-//    if (reply->error() == QNetworkReply::NoError){
-//        requestFinished = true;
-//    } else {
-//        //获取响应的信息，状态码为200表示正常
-//        QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-//        qDebug() << "request error! return code : " << status_code;
-//    }
-//}
-
-//void YunDM::readyRead()
-//{
-//    if(requestFinished){
-
-//    }else{
-
-//    }
-//}
-
-//void YunDM::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
-//{
-////    if(reply->isFinished()){
-////        progress->setHidden(true);
-////    }
-//    progress->setMaximum(totalBytes);
-//    progress->setValue(bytesRead);
-//    qDebug() << " total bytes :" << totalBytes << "read bytes : " << bytesRead;
-//}
 
 
 

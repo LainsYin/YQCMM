@@ -1,13 +1,13 @@
 Exception: STATUS_ACCESS_VIOLATION at eip=610DEFA1
 eax=00000000 ebx=00000074 ecx=FFFFFFFF edx=00000000 esi=0028CB50 edi=00000000
-ebp=0028C598 esp=0028C594 program=C:\Users\Administrator\Desktop\media\cygwin\cygwin\bin\cmake.exe, pid 3024, thread main
+ebp=0028C598 esp=0028C594 program=C:\Users\Administrator\Desktop\media\cygwin\cygwin\bin\cmake.exe, pid 8392, thread main
 cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
 Stack trace:
 Frame     Function  Args
-0028C598  610DEFA1  (00000000, 00000000, 012001B0, 007BC78B)
-0028CC28  004021B5  (00000002, 012001B0, 00405750, 00405767)
-0028CC58  0040578A  (00000002, 012001B0, 01200090, 0028CE64)
+0028C598  610DEFA1  (00000000, 00000000, 013001B0, 007BC78B)
+0028CC28  004021B5  (00000002, 013001B0, 00405750, 00405767)
+0028CC58  0040578A  (00000002, 013001B0, 01300090, 0028CE64)
 0028CD68  610060D8  (00000000, 0028CDA0, 61005450, 0028CDA0)
 61005450  61004416  (0000009C, A02404C7, E8611021, FFFFFF48)
- 641109 [main] cmake 3024 _cygtls::handle_exceptions: Exception: STATUS_ACCESS_VIOLATION
- 660264 [main] cmake 3024 _cygtls::handle_exceptions: Error while dumping state (probably corrupted stack)
+1041021 [main] cmake 8392 _cygtls::handle_exceptions: Exception: STATUS_ACCESS_VIOLATION
+1068141 [main] cmake 8392 _cygtls::handle_exceptions: Error while dumping state (probably corrupted stack)

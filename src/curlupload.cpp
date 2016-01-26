@@ -39,7 +39,7 @@ size_t write_console(void *buffer, size_t size, size_t count, void *userp)
     QString qstr(str.data());
     receiveData = qstr;
 
-    qDebug() << "buffer data : " << qstr << " userp : " << userp;
+    qDebug() << "buffer data : " << qstr;
     return count*size;
 }
 
@@ -527,6 +527,34 @@ QString CurlUpload::uploadStoreUpdateStatus(const QString &urlstr, const QString
     return returnStr;
 }
 
+QString CurlUpload::getRequest(std::string &url, std::string &retdata)
+{
+    CURLcode res;
+    CURL *curl = curl_easy_init();
+    if (NULL == curl){
+        qDebug() << "CURL INIT error!";
+        return "";
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, NULL);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_console);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&retdata);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 3);
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK)
+    {
+       qDebug() << " GET failed : " << res;
+       return "";
+    }
+    curl_easy_cleanup(curl);
+    curl_global_cleanup();
+
+    return receiveData;
+}
+
 QString CurlUpload::getImgPath(QString filename)
 {
     QString path = QCoreApplication::applicationDirPath();
@@ -811,9 +839,9 @@ int CurlUpload::uploadFile(const char *url,
     {
        fprintf(stderr, "curl_easy_perform[%d] error.\n", res);
        curl_formfree(post);
-       return -1;
+       return res;
     }
-    qDebug() << " read data : " << reData;
+    qDebug() << " curl res : " << res << " read data : " << reData;
     curl_easy_cleanup(curl);
     curl_formfree(post);
     curl_slist_free_all(headerlist);

@@ -37,6 +37,7 @@ public:
     void initWidgetValue();
     void initSql(MysqlQuery *sql);
     void paintEvent(QPaintEvent *painter);
+    bool eventFilter(QObject *dialog, QEvent *event);
 signals:
     void sqlValue(QList< QStringList > rowList);
 
@@ -150,6 +151,8 @@ private:
     int request_type;
     MysqlQuery *_sql;
     YunDM *dialog;
+
+    int storeid;
 };
 
 #endif // YUNCLIENT_H

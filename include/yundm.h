@@ -29,14 +29,14 @@ public:
     void readAndSetStyleSheet();
     void initWidget();
     void initWidgetValue();
-    void initSqlAndVersion(MysqlQuery *sql, const QString &verId, const QString &verName);
+    void initSqlAndVersion(MysqlQuery *sql, const QString &verId,
+                           const QString &verName, const bool &isUpdate);
     void paintEvent(QPaintEvent *);
 
 
 public slots:
     void setSqlValue(QList< QStringList > rowVal);
     void updateInfo();
-    void updateInfo1();
 
 private slots:
 //    void replyFinished();
@@ -49,12 +49,8 @@ private slots:
     void updateStoreStatus();
 
 private:
-//    void startRequest(QString url);
-    QString downloadFile(const QString &type, const QString &name, const QString &url);
-    bool uploadFile(const QString &type, const QString &filePath);
 
     void timeStart();
-    bool execSql(const QStringList &info);
     void writeLogging(const QString &str);
     void setTitleText(const QString &text="下载管理");
 

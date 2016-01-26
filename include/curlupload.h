@@ -120,6 +120,8 @@ public:
 
     QString uploadStoreUpdateStatus(const QString &urlstr, const QString &str);
 
+    QString getRequest(std::string &url, std::string &retdata);
+
 private:
     QString getImgPath(QString filename);
     QString getUrl(QString filename);

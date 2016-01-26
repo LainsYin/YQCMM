@@ -24,8 +24,12 @@
 #include <QtNetwork/QNetworkReply>
 #include <QMessageBox>
 #include <QDebug>
+#include <QDialog>
+#include <QMouseEvent>
 
 #define RECORD_PAGE 10
+
+//#define QREQUEST
 
 YunClient::YunClient(QWidget *parent) : QWidget(parent)
 {
@@ -47,6 +51,7 @@ YunClient::YunClient(QWidget *parent) : QWidget(parent)
     QSettings *initConfig = new QSettings("SongsMaintain.conf", QSettings::IniFormat);
     initConfig->setIniCodec("UTF-8");
     host = initConfig->value("UPDATE/hostport").toString();
+    storeid = initConfig->value("UPDATE/storeid").toInt();
 }
 
 YunClient::~YunClient()
@@ -198,19 +203,25 @@ void YunClient::initWidget()
 void YunClient::initWidgetValue()
 {
     label_cen->setText("至");
-//    label_progress->setText("进度:");
-//    label_speed->setText("速度:");
     label_recordPage->setText("每页显示");
     label_totalRecords->setText("共：");
     lineedit_recordPage->setText(QString::number(RECORD_PAGE));
     pushbutton_query->setText("查询");
     pushbutton_next->setText("下一页");
     pushbutton_up->setText("上一页");
+
+
+
+    widget_top->installEventFilter(this);
+    widget_center->installEventFilter(this);
+    widget_bottom->installEventFilter(this);
+    calendar_start->installEventFilter(this);
 }
 
 void YunClient::initSql(MysqlQuery *sql)
 {
     _sql = sql;
+    getUpdateVersionList();
 }
 
 void YunClient::paintEvent(QPaintEvent *painter)
@@ -221,6 +232,35 @@ void YunClient::paintEvent(QPaintEvent *painter)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
     painter->ignore();
+}
+
+bool YunClient::eventFilter(QObject *dialog, QEvent *event)
+{
+    if(event->type() == QEvent::MouseButtonPress){
+        QPoint start_point = calendar_start->mapToGlobal(calendar_start->pos());
+        QPoint end_point = calendar_end->mapToGlobal(calendar_end->pos());
+        QPoint mouse_point = QCursor::pos(); // QMouseEvent::globalPos(); //全局坐标；
+
+        if (mouse_point.x() < start_point.x()  ||
+            mouse_point.x() > start_point.x() + calendar_start->geometry().width() ||
+            mouse_point.y() < start_point.y() ||
+            mouse_point.y() > start_point.y() + calendar_start->geometry().height()){
+            if (!calendar_start->isHidden()){
+                calendar_start->setHidden(true);
+            }
+        }
+
+        if (mouse_point.x() < end_point.x()  ||
+            mouse_point.x() > end_point.x() + calendar_end->geometry().width() ||
+            mouse_point.y() < end_point.y() ||
+            mouse_point.y() > end_point.y() + calendar_end->geometry().height()){
+            if (!calendar_end->isHidden()){
+                calendar_end->setHidden(true);
+            }
+        }
+    }
+
+    return QWidget::eventFilter(dialog, event);
 }
 
 void YunClient::setCalendarStatue_s(bool )
@@ -243,12 +283,20 @@ void YunClient::updateCaleSta_s()
 {
     QString date = calendar_start->selectedDate().toString("yyyy-MM-dd");
     lineedit_start->setText(date);
+
+    if (!calendar_start->isHidden()){
+        calendar_start->setHidden(true);
+    }
 }
 
 void YunClient::updateCaleSta_e()
 {
     QString date = calendar_end->selectedDate().toString("yyyy-MM-dd");
     lineedit_end->setText(date);
+
+    if (!calendar_end->isHidden()){
+        calendar_end->setHidden(true);
+    }
 }
 
 void YunClient::getUpdateVersionList()
@@ -276,13 +324,25 @@ QByteArray YunClient::getUrl(QByteArray path)
     url.append(QString::number(cur_page)).append("/");
     url.append(QString::number(record_page)).append("/");
     url.append(lineedit_start->text().isEmpty() ? "null" : lineedit_start->text()).append("/");
-    url.append(lineedit_end->text().isEmpty() ? "null" : lineedit_end->text());
+    url.append(lineedit_end->text().isEmpty() ? "null" : lineedit_end->text()).append("/");
+    url.append(QString::number(storeid));
 
     return url;
 }
 
 void YunClient::startRequest(QByteArray url)
 {
+#ifndef QREQUEST
+    qDebug() << " request url : " << url;
+    std::string std_url = url.toStdString(); // "http://121.40.218.177:8080/ml/rs/mediaReleaseVersions/1/10/null/null/90001";
+    std::string readData;
+    CurlUpload *curl = new CurlUpload();
+    QString data = curl->getRequest(std_url, readData);
+    delete curl;
+    QJsonObject dataJson = getRequestData(QString(data));
+    QJsonArray listJson = setPagingInfo(dataJson);
+    setVersionList(listJson);
+#else
     QNetworkRequest request;
     request.setUrl(QUrl(url));
     manager = new QNetworkAccessManager(this);
@@ -292,12 +352,13 @@ void YunClient::startRequest(QByteArray url)
     disconnect(reply);
     connect(reply, &QNetworkReply::finished,
             this, &YunClient::replyFinished);
-    //连接响应时返回数据信号
-//    connect(reply, &QNetworkReply::readyRead, this, &YunClient::readyRead);
+    连接响应时返回数据信号
+    connect(reply, &QNetworkReply::readyRead, this, &YunClient::readyRead);
 
-    //请求更新进度
-//    connect(reply, &QNetworkReply::downloadProgress,
-//            this,  &YunClient::updateDataReadProgress);
+    请求更新进度
+    connect(reply, &QNetworkReply::downloadProgress,
+            this,  &YunClient::updateDataReadProgress);
+#endif
 }
 
 void YunClient::replyFinished()
@@ -379,13 +440,31 @@ void YunClient::requestVersionInfo(const int &row)
 
     request_type = get_media_list;
     QByteArray url =  host.toLatin1() + "/ml/rs/mediaReleaseVersions/" + verId.toLatin1();
+
+#ifndef QREQUEST
+    std::string std_url = url.toStdString();
+    std::string readData;
+    CurlUpload *curl = new CurlUpload();
+    QString data = curl->getRequest(std_url, readData);
+#else
     startRequest(url);
+#endif
+
+    bool isUpdate = false;
+    if (rowValue.last().compare("已更新") == 0)
+        isUpdate = true;
 
     dialog = new YunDM();
-    dialog->initSqlAndVersion(_sql, verId, verName);
+    dialog->initSqlAndVersion(_sql, verId, verName, isUpdate);
     connect(this, &YunClient::sqlValue, dialog, &YunDM::setSqlValue);
-    dialog->exec();
 
+#ifndef QREQUEST
+    QJsonObject dataJson = getRequestData(data);
+    setUpdateList(dataJson);
+#else
+
+#endif
+    dialog->exec();
     getUpdateVersionList();
 }
 
@@ -527,6 +606,13 @@ void YunClient::setVersionList(QJsonArray json)
             QJsonValue value = vjson.take("releaseTime");
             rowValue.append(value.toString());
         }
+        if(vjson.contains("isUpdate")){
+            QJsonValue value = vjson.take("isUpdate");
+            QString status("未更新");
+            if (value.toBool())
+                status = "已更新";
+            rowValue.append(status);
+        }
 
         rowList.append(rowValue);
     }
@@ -549,7 +635,7 @@ void YunClient::setUpdateList(QJsonObject json)
         for (int i=0; i<mediaArr.size(); i++)
         {
             rowValue.clear();
-            QString mvPath, lyricPath, sql;
+            QString mvPath = "", lyricPath = "", sql = "";
             QJsonObject vjson = mediaArr.at(i).toObject();
             rowValue.append(QString::number(i+1));
             if(vjson.contains("type")){
@@ -617,8 +703,8 @@ void YunClient::setUpdateList(QJsonObject json)
                 sql = value.toString();
             }
 
-            rowValue.append(imagePath);
             rowValue.append("");
+            rowValue.append(imagePath);
             rowValue.append(sql);
             rowList.append(rowValue);
         }

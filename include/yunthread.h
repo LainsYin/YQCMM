@@ -22,6 +22,7 @@ private:
 
     bool execSql(const QStringList &info);
     void writeLogging(const QString &str);
+    void messageBoxShow(const QString &title, const QString &text);
 
 signals:
     void updateView(QStringList rowList);
